@@ -6,7 +6,20 @@ node 18.6.0
 npm 9.6.2
 vue3
 
-
+## 二开步骤
+1. 下载代码 
+    ```shell
+    git clone git@github.com:SinMu-L/chatweb.git
+    ```
+2. 进入项目目录按照依赖
+    ```shell
+    cd chatweb
+    npm install
+    ```
+3. 运行页面
+    ```shell
+    npm run dev
+    ```
 
 
 ## Vue3 选项式基础
@@ -118,7 +131,10 @@ ref
 
     > 解决办法：`<textarea v-model="textareaValue"  :readonly="true|false"></textarea>` 
 
-问题7： vue3中如何做到点一个就切换一个页面的？
+✅问题7： vue3中如何做到点一个就切换一个页面的？
+> vue-route
+>
+> 或者参考 naive-ui 中的tabs组件
 
 ✅问题8： vue3中v-if 和v-show的区别
 1. v-if="true" 的时候，元素就会渲染，否则不渲染
@@ -127,12 +143,15 @@ ref
 ❌问题9：当我按下回车后，我想让鼠标不在textarea中
 
 问题10：什么时候应该使用计算属性？
+> 看心情
  
 问题11：stream流的数据解析一直有问题，不知道怎么解决
 
 问题12: vue-route 内部包含了一些元素，出现了部分点击位置无效
+> 写错了
 
 问题13： vue3中动态添加路由到store中，多个路由对应一个组件。切换路由的时候，路由对应的组件无法渲染
+> 这里应该是用 `/chat/:id` 这种路由, 完了那`id`对应的数据在 `route-view` 里面渲染
 
 
 
