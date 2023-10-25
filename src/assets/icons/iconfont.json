@@ -1,0 +1,37 @@
+{
+  "id": "4285046",
+  "name": "test",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "109734",
+      "name": "edit",
+      "font_class": "edit",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "584738",
+      "name": "chat",
+      "font_class": "chat1196057easyiconnet1",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "8106217",
+      "name": "delete",
+      "font_class": "delete",
+      "unicode": "e699",
+      "unicode_decimal": 59033
+    },
+    {
+      "icon_id": "10314096",
+      "name": "实验室",
+      "font_class": "shiyanshi",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    }
+  ]
+}

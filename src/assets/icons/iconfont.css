@@ -1,0 +1,47 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4285046 */
+  src: url('//at.alicdn.com/t/c/font_4285046_tutxiihi09.woff2?t=1697509730027') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4285046_tutxiihi09.woff?t=1697509730027') format('woff'),
+       url('//at.alicdn.com/t/c/font_4285046_tutxiihi09.ttf?t=1697509730027') format('truetype'),
+       url('//at.alicdn.com/t/c/font_4285046_tutxiihi09.svg?t=1697509730027#iconfont') format('svg');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-icon_sent:before {
+  content: "\e60c";
+}
+
+.icon-left-btn:before {
+  content: "\e83d";
+}
+
+.icon-shezhi:before {
+  content: "\e64b";
+}
+
+.icon-edit1:before {
+  content: "\e7e1";
+}
+
+.icon-edit:before {
+  content: "\e615";
+}
+
+.icon-chat1196057easyiconnet1:before {
+  content: "\e62c";
+}
+
+.icon-delete:before {
+  content: "\e699";
+}
+
+.icon-shiyanshi:before {
+  content: "\e623";
+}
