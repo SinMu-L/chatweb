@@ -37,76 +37,8 @@ vue3
 
 ✅问题4：textarea回车+ctrl 也会发送消息
 
-✅问题5：fetch 请求API获取流数据
-    ```
-    如果你想在Vue 3的组件中的其他函数中调用上述的`startStream`函数，你可以将它定义为组件的方法，并在需要的地方调用该方法。以下是一个示例代码，演示了如何在Vue 3组件中的其他函数中调用`startStream`方法：
-
-    ```vue
-    <template>
-    <div>
-        <div id="output">{{ output }}</div>
-        <button @click="callStartStream">Start Stream</button>
-    </div>
-    </template>
-
-    <script>
-    export default {
-    data() {
-        return {
-        output: ''
-        };
-    },
-    methods: {
-        async startStream() {
-        const response = await fetch('/generate', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ prompt: 'Your prompt here' }) // 替换为你的API请求参数
-        });
-
-        const reader = response.body.getReader();
-
-        const processStream = async () => {
-            const { done, value } = await reader.read();
-
-            if (done) {
-            console.log('Stream completed');
-            return;
-            }
-
-            // 将数据块添加到页面上
-            const chunk = new TextDecoder('utf-8').decode(value);
-            this.output += chunk;
-
-            // 继续处理下一个数据块
-            await processStream();
-        };
-
-        // 开始处理流数据
-        await processStream();
-        },
-        callStartStream() {
-        this.startStream();
-        },
-        // 在其他函数中调用startStream方法
-        someOtherFunction() {
-        this.startStream();
-        }
-    }
-    };
-    </script>
-    ```
-
-    <!-- 在这个示例中，我们添加了一个按钮`Start Stream`，并将其绑定到`callStartStream`方法。当用户点击按钮时，`callStartStream`方法会调用`startStream`方法，从而开始流式输出。
-
-    另外，我们还在组件的`someOtherFunction`方法中调用了`startStream`方法。你可以在其他需要的函数中按照类似的方式调用`startStream`方法。
-
-    请注意，为了在Vue组件的方法中正确访问`this`，我们使用了JavaScript的箭头函数或者`async`/`await`语法。这样可以确保在方法中正确引用组件的实例。
-
-    记得根据你的实际需求进行修改和扩展代码，以适应你的Vue项目。 -->
-    ```
+✅~~问题5：fetch 请求API获取流数据~~
+ 
 
 ✅问题6：vue中如何实现下面的变化
     ```
