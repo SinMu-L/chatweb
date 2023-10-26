@@ -19,7 +19,7 @@ export default {
       text: "",
       // 默认：消息出于加载中
       msgReload: false,
-      // 默认：非只读
+      // 默认：输入框可以写入
       readonly: false,
       store,
     }
@@ -35,17 +35,32 @@ export default {
         }
         this.readonly = true
 
-        this.msgList.push({ role: "user", time: (new Date()).toLocaleString("sv-SE"), msg: this.text, msgReload: false })
+        const uuid = this.$route.params.uuid
+        const index = store.chatStorage.data.chat.findIndex(v=>v.uuid == uuid)
+        store.chatStorage.data.chat[index].data.push({
+            time: (new Date()).toLocaleString("sv-SE"),
+            msg: this.text,
+            role: "user",
+            msgReload: false
+          })
+
+        // this.msgList.push({ role: "user", time: (new Date()).toLocaleString("sv-SE"), msg: this.text, msgReload: false })
         var t = this.text
         this.text = ""
-        this.msgList.push({ role: "AI", time: (new Date()).toLocaleString("sv-SE"), msg: "", msgReload: true })
+        store.chatStorage.data.chat[index].data.push({
+            time: (new Date()).toLocaleString("sv-SE"),
+            msg: "",
+            role: "AI",
+            msgReload: true
+          })
+        // this.msgList.push({ role: "AI", time: (new Date()).toLocaleString("sv-SE"), msg: "", msgReload: true })
         console.log(t)
-        this.startStream(t)
+        this.startStream(t,index)
       }
 
 
     },
-    async startStream(prompt) {
+    async startStream(prompt, index) {
       const url = import.meta.env.VITE_AI_BASE_URL;
       const key = import.meta.env.VITE_AI_KEY
       const response = await fetch(url, {
@@ -82,9 +97,11 @@ export default {
           const res = chunk.split(": ")[1].split("\n\n")[0]
 
           const result = JSON.parse(res)
+          store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length -1].msgReload = false
+          store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length -1].msg += `${result['choices'][0]['delta']['content']}`
           this.msgList[this.msgList.length - 1]['msgReload'] = false
-          this.msgList[this.msgList.length - 1]['msg'] += `${result['choices'][0]['delta']['content']}`
-          console.log(result['choices'][0]['delta']['content']);
+          // this.msgList[this.msgList.length - 1]['msg'] += `${result['choices'][0]['delta']['content']}`
+          // console.log(result['choices'][0]['delta']['content']);
         } catch (e) {
           console.log("解析数据出错:", chunk)
           // this.msgList[this.msgList.length - 1]['msg'] += `${chunk}`
@@ -99,9 +116,18 @@ export default {
     },
 
   },
+  mounted(){
+    
+  },
   updated(){
-    console.log('对应的idd:', this.$route.params.uuid)
-    // this.msgList = store.getMsgListByUuid(this.$route.params.uuid)
+    if(this.$route.params.uuid){
+      try{
+        this.msgList = store.getMsgListByUuid(this.$route.params.uuid)
+
+      }catch(e){
+        console.log('获取消息列表失败.', this.$route.params.uuid)
+      }
+    }
   },
 
 }
@@ -109,11 +135,13 @@ export default {
 </script>
 
 <template>
+  <div  class="right  h-full  " :class="store.isShow ? 'w-4/5' : 'w-full'">
 
-  <div class="right  h-full  " :class="store.isShow ? 'w-4/5' : 'w-full'">
-    <div class="mx-4 h-full flex flex-col ">
-      <div class=" basis-5/6 px-4 border  border-red-300  overflow-auto">
-        <div class="pt-2">
+
+    <div  class="mx-4 h-full flex flex-col ">
+      <div  class=" basis-5/6 px-4 border   overflow-auto">
+        <div v-if="this.$route.path == '/'" class="text-center text-slate-300">Aha</div>
+        <div v-else class="pt-2">
           <MessageItem v-for="(msgItem, index) in msgList" :key="index" :role="msgItem['role']" :msg="msgItem['msg']"
             :time="msgItem['time']" :msgReload="msgItem['msgReload']"></MessageItem>
         </div>

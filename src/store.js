@@ -17,10 +17,13 @@ export const store = reactive({
     ]
   },
   chatStorage: {
-    "data": {
-      "active": 0,
-      "chat": [
-        {uuid: 1,title: 'New Chat', enEdit:false, data: [
+    data: {
+      active: 0,
+      sidebar: [
+        {uuid: 1, title: "New Chat", enEdit: false}
+      ],
+      chat: [
+        {uuid: 1, data: [
           {
             "time": "",
             "msg": "index-1",

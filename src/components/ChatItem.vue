@@ -19,6 +19,8 @@ export default {
         },
         delItem(e) {
             this.$emit('del', this.idx)
+            // 阻止冒泡,如果不添加会触发 router-link 的跳转
+            e.preventDefault();
         },
         activeItem(){
             return this.$route.path == this.path ? 'bg-gray-200': ''
