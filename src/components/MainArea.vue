@@ -143,7 +143,7 @@ export default {
   <div  class="right  h-full  " :class="store.isShow ? 'w-4/5' : 'w-full'">
 
 
-    <div  class="mx-4 h-full flex flex-col border border-red-500 ">
+    <div  class="mx-4 h-full flex flex-col  ">
       <div class="basis-1/12 border flex justify-start items-center px-4 lg:hidden ">
         {{ getTitle() }}
       </div>
