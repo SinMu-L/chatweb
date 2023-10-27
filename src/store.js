@@ -4,7 +4,7 @@ import  './utils/localstorage.ts'
 
 export const store = reactive({
   count: 0,
-  isShow: false,
+  isShow: true,
   model: 'gpt-3.5-turbo',
   Temperatures: 0.7,
   Top_p: 1,

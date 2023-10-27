@@ -87,31 +87,25 @@ export default {
 </script>
 
 <template>
-    <n-drawer v-model:show="store.isShow" resizable placement="left" class="w-full ">
-        <n-drawer-content title="" header-style="display:none;" body-content-style="height: 98%" footer-style="height:8.5%;"
-            closable>
+    <div class="left relative w-1/5 px-2 h-full border flex flex-col " v-show="store.isShow">
+        <div class=" basis-1/12">
+            <div @click="addChatItem"
+                class=" m-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
+                新建聊天</div>
+        </div>
+        <div class="basis-10/12 overflow-auto ">
 
-            <div class="h-full  flex flex-col border" v-show="store.isShow">
-                <div class=" basis-1/12">
-                    <div @click="addChatItem"
-                        class=" m-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
-                        新建聊天</div>
-                </div>
-                <div class="basis-11/12 overflow-auto">
+            <ChatItem v-for="(chat, index) in store.chatStorage.data.sidebar" :key="index" :idx="chat['uuid']"
+                v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
+                @enableEdit="enableEditChatItem"></ChatItem>
+        </div>
+        <div class="basis-1/12 mt-4">
+            <User></User>
+        </div>
 
-                    <ChatItem v-for="(chat, index) in store.chatStorage.data.sidebar" :key="index" :idx="chat['uuid']"
-                        v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
-                        @enableEdit="enableEditChatItem"></ChatItem>
-                </div>
-            </div>
-            <template #footer>
-                <div class="mt-4">
-                    <User></User>
-                </div>
-            </template>
-        </n-drawer-content>
-    </n-drawer>
-    <span @click="store.isShow = true">
+    </div>
+
+    <span @click="sidebarFlex">
         <div class="  absolute top-1/3 flex flex-col">
             <div class=" w-1/3   t-shaw">1</div>
             <div class=" w-1/3 font-medium ltpic-main flex justify-center items-center">{{ store.isShow ? "&lt;" : "&gt;" }}

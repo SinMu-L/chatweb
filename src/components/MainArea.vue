@@ -116,8 +116,11 @@ export default {
     },
     getTitle(){
       const uuid = this.$route.params.uuid
-      const item = store.chatStorage.data.sidebar.find(v=>v.uuid==uuid)
-      return item.title
+      if(uuid){
+        const item = store.chatStorage.data.sidebar.find(v=>v.uuid==uuid)
+        return item.title
+      }
+      return 'Aha'
     }
 
   },
