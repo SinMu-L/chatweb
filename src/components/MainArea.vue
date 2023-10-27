@@ -140,7 +140,7 @@ export default {
 </script>
 
 <template>
-  <div  class="right  h-full  " :class="store.isShow ? 'w-4/5' : 'w-full'">
+  <div  class="right  h-full  w-full" >
 
 
     <div  class="mx-4 h-full flex flex-col  ">
