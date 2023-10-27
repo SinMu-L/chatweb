@@ -114,6 +114,11 @@ export default {
       // 开始处理流数据
       await processStream();
     },
+    getTitle(){
+      const uuid = this.$route.params.uuid
+      const item = store.chatStorage.data.sidebar.find(v=>v.uuid==uuid)
+      return item.title
+    }
 
   },
   mounted(){
@@ -138,8 +143,11 @@ export default {
   <div  class="right  h-full  " :class="store.isShow ? 'w-4/5' : 'w-full'">
 
 
-    <div  class="mx-4 h-full flex flex-col ">
-      <div  class=" basis-5/6 px-4 border   overflow-auto">
+    <div  class="mx-4 h-full flex flex-col border border-red-500 ">
+      <div class="basis-1/12 border flex justify-start items-center px-4 lg:hidden ">
+        {{ getTitle() }}
+      </div>
+      <div  class=" basis-full px-4 border   overflow-auto">
         <div v-if="this.$route.path == '/'" class="text-center text-slate-300">Aha</div>
         <div v-else class="pt-2">
           <MessageItem v-for="(msgItem, index) in msgList" :key="index" :role="msgItem['role']" :msg="msgItem['msg']"
