@@ -22,7 +22,7 @@ export default {
                 v-bind:class="role == 'user' ? 'flex-row-reverse' : 'flex-row'">
 
                 <img class="rounded-full w-7 h-7" src="../assets/icon.jpg" alt="">
-                <span class=" mx-8">{{ time }}</span>
+                <span class=" mx-4 text-xs">{{ time }}</span>
             </div>
             <div class="message px-3 h-auto overflow-clip   flex"
                 v-bind:class="role == 'user' ? 'flex-row-reverse' : 'flex-row'">
