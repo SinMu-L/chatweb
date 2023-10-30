@@ -153,9 +153,9 @@ export default {
 <template>
   <div class="right  h-full  w-full">
     <div class="mx-4 h-full flex flex-col  ">
-      <!-- <div class="basis-1/12 border flex justify-start items-center px-4 lg:hidden ">
+      <div class="basis-1/12 border flex justify-start items-center px-4 sm:hidden ">
         {{ getTitle() }}
-      </div> -->
+      </div>
       <div class=" basis-5/6 px-4 border   overflow-auto">
         <div v-if="this.$route.path == '/'" class="text-center text-slate-300">Aha</div>
         <div v-else class="pt-2">
