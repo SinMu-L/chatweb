@@ -117,7 +117,10 @@ vue3
 >                @enableEdit="enableEditChatItem"></ChatItem>
 >    ```
 
-问题17：怎么做移动端自适应？
+✅问题17：怎么做移动端自适应？
+> 参考： https://tailwind.nodejs.cn/docs/responsive-design
+
+问题18：考虑对接一个密码输入框
 
 等待下一次DOM刷新 
 资料：https://cn.vuejs.org/api/general.html#nexttick
