@@ -20,7 +20,7 @@ router.afterEach((to, from, next)=>{
             const index = store.chatStorage.data.sidebar.findIndex(v=>v.uuid == uuid)
             console.log('uuid:', to.params.uuid, 'index: ',index)
             if(index>-1) return true
-            return router.replace('/404')
+            return router.replace('/')
 
         }else{
             return true

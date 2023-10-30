@@ -117,6 +117,7 @@ vue3
 >                @enableEdit="enableEditChatItem"></ChatItem>
 >    ```
 
+问题17：怎么做移动端自适应？
 
 等待下一次DOM刷新 
 资料：https://cn.vuejs.org/api/general.html#nexttick
