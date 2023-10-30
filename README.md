@@ -91,6 +91,26 @@ vue3
 >
 > 在 popSidebar 方法中阻止之间冒泡就行，或者添加事件委托(还不会事件委托)
 
+问题15：侧壁栏添加新的item的时候宽度会改变，需要找到原因
+
+✅问题16：侧边栏有2个item，当我先删除第一个item的时候，页面会跳转到404
+> 这里的原因是因为我绑定的key有问题，不止直接绑定循环里面的索引
+> 
+> 由
+> 
+> ```vue
+> <ChatItem v-for="(chat,index) in store.chatStorage.data.sidebar" :key="index" :idx="chat['uuid']"
+>                 v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
+>                 @enableEdit="enableEditChatItem"></ChatItem>
+> ```
+>
+> 改成
+>    ```vue
+>     <ChatItem v-for="(chat) in store.chatStorage.data.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
+>                v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
+>                @enableEdit="enableEditChatItem"></ChatItem>
+>    ```
+
 
 等待下一次DOM刷新 
 资料：https://cn.vuejs.org/api/general.html#nexttick

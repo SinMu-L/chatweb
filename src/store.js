@@ -20,23 +20,23 @@ export const store = reactive({
     data: {
       active: 0,
       sidebar: [
-        {uuid: 1, title: "New Chat", enEdit: false}
+        // {uuid: 1, title: "New Chat", enEdit: false}
       ],
       chat: [
-        {uuid: 1, data: [
-          {
-            "time": "",
-            "msg": "index-1",
-            "role": "AI",
-            "msgReload": false
-          },
-          {
-            "time": "",
-            "msg": "index-1",
-            "role": "user",
-            "msgReload": false
-          }
-        ]},
+        // {uuid: 1, data: [
+        //   {
+        //     "time": "",
+        //     "msg": "index-1",
+        //     "role": "AI",
+        //     "msgReload": false
+        //   },
+        //   {
+        //     "time": "",
+        //     "msg": "index-1",
+        //     "role": "user",
+        //     "msgReload": false
+        //   }
+        // ]},
       ]
     },
     "expire": null

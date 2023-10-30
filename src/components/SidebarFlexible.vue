@@ -25,7 +25,7 @@ export default {
             store.isShow = !store.isShow
         },
         popChaItemData(idx) {
-            console.log('要删除的索引值', idx)
+            console.log('要删除的路由：', idx)
 
             if (store.chatStorage.data.chat.length > 0) {
                 const index = store.chatStorage.data.chat.findIndex(v => v.uuid == idx)
@@ -36,7 +36,8 @@ export default {
 
                 console.log('删除。。')
                 if (store.chatStorage.data.chat.length > 0) {
-                    this.$router.replace(`/chat/${store.chatStorage.data.chat[index - 1].uuid}`)
+                    console.log("即将跳转的路由：",store.chatStorage.data.chat[0].uuid)
+                    this.$router.replace(`/chat/${store.chatStorage.data.chat[0].uuid}`)
                 } else {
                     this.$router.replace('/')
                 }
@@ -87,20 +88,20 @@ export default {
 </script>
 
 <template>
-    <div class="left relative w-1/5 px-2 h-full border flex flex-col " v-show="store.isShow">
+    <div class="left relative w-1/5 px-2 h-full border flex flex-col border-red-500" v-show="store.isShow">
         <div class=" basis-1/12">
             <div @click="addChatItem"
                 class=" m-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
                 新建聊天</div>
         </div>
-        <div class="basis-10/12 overflow-auto ">
+        <div class="basis-10/12 overflow-auto border ">
 
-            <ChatItem v-for="(chat, index) in store.chatStorage.data.sidebar" :key="index" :idx="chat['uuid']"
+            <ChatItem v-for="(chat) in store.chatStorage.data.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
                 v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
                 @enableEdit="enableEditChatItem"></ChatItem>
         </div>
         <div class="basis-1/12 mt-4">
-            <User></User>
+            <!-- <User></User> -->
         </div>
 
     </div>
@@ -118,9 +119,6 @@ export default {
 
 
 <style scope>
-.n-drawer .n-drawer-content .n-drawer-body-content-wrapper {
-    padding: unset !important;
-}
 
 :root {
     --main-bg-color: rgb(213, 214, 216);
