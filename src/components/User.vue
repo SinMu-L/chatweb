@@ -31,7 +31,7 @@ export default {
 </script>
 
 <template>
-    <div class="absolute bottom-0 left-0 border  w-full">
+    <div class="absolute bottom-0 left-0 border  w-full bg-white">
         <div class="w-full flex flex-row h-full ">
 
             <div class=" basis-1/4 flex justify-center items-center">

@@ -94,14 +94,14 @@ export default {
                 class=" m-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
                 新建聊天</div>
         </div>
-        <div class="basis-10/12 overflow-auto border ">
+        <div class="basis-10/12 overflow-auto  ">
 
             <ChatItem v-for="(chat) in store.chatStorage.data.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
                 v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
                 @enableEdit="enableEditChatItem"></ChatItem>
         </div>
         <div class="basis-1/12 mt-4">
-            <!-- <User></User> -->
+            <User></User>
         </div>
 
     </div>
