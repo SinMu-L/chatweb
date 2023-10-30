@@ -36,26 +36,26 @@ export default {
         this.readonly = true
 
         const uuid = this.$route.params.uuid
-        const index = store.chatStorage.data.chat.findIndex(v=>v.uuid == uuid)
+        const index = store.chatStorage.data.chat.findIndex(v => v.uuid == uuid)
         store.chatStorage.data.chat[index].data.push({
-            time: (new Date()).toLocaleString("sv-SE"),
-            msg: this.text,
-            role: "user",
-            msgReload: false
-          })
+          time: (new Date()).toLocaleString("sv-SE"),
+          msg: this.text,
+          role: "user",
+          msgReload: false
+        })
 
-        // this.msgList.push({ role: "user", time: (new Date()).toLocaleString("sv-SE"), msg: this.text, msgReload: false })
         var t = this.text
         this.text = ""
         store.chatStorage.data.chat[index].data.push({
-            time: (new Date()).toLocaleString("sv-SE"),
-            msg: "",
-            role: "AI",
-            msgReload: true
-          })
-        // this.msgList.push({ role: "AI", time: (new Date()).toLocaleString("sv-SE"), msg: "", msgReload: true })
+          time: (new Date()).toLocaleString("sv-SE"),
+          msg: "",
+          role: "AI",
+          msgReload: true
+        })
+
         console.log(t)
-        this.startStream(t,index)
+        await this.startStream(t, index)
+        // this.getStreamV2(t,index)
       }
 
 
@@ -79,61 +79,68 @@ export default {
       });
 
       const reader = response.body.getReader();
+      let buffer = ''; // 用于缓存数据块
 
-      const processStream = async () => {
+      const readStream = async () =>{
         const { done, value } = await reader.read();
 
         if (done) {
-          console.log('Stream completed');
+          console.log('Stream reading complete');
           this.readonly = false
           return;
         }
 
-        // 将数据块添加到页面上
-        const chunk = `${new TextDecoder().decode(value)}`;
-        // this.output += chunk;
+        const chunk = new TextDecoder('utf-8').decode(value);
+        buffer += chunk; // 将数据块追加到缓冲区中
 
-        try {
-          const res = chunk.split(": ")[1].split("\n\n")[0]
+        // 检查缓冲区中是否有完整的数据
+        let completeData = '';
+        let separatorIndex;
+        while ((separatorIndex = buffer.indexOf('\n')) !== -1) {
+          completeData = buffer.slice(0, separatorIndex); // 提取完整的数据
+          buffer = buffer.slice(separatorIndex + 1); // 更新缓冲区，去掉已处理的数据
 
-          const result = JSON.parse(res)
-          store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length -1].msgReload = false
-          store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length -1].msg += `${result['choices'][0]['delta']['content']}`
-          this.msgList[this.msgList.length - 1]['msgReload'] = false
-          // this.msgList[this.msgList.length - 1]['msg'] += `${result['choices'][0]['delta']['content']}`
-          // console.log(result['choices'][0]['delta']['content']);
-        } catch (e) {
-          console.log("解析数据出错:", chunk)
-          // this.msgList[this.msgList.length - 1]['msg'] += `${chunk}`
+          // 解析JSON数据
+          const res = completeData.split(": ")[1]
+          let data;
+          try{
+            data = JSON.parse(res);
+            console.log('Received data:', data.choices[0].delta.content);
+            store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length - 1].msgReload = false
+            store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length - 1].msg += `${data.choices[0].delta.content}`
+          }catch(e){
+            // console.error('Error parsing JSON:', e);
+            continue
+          }
         }
 
-        // 继续处理下一个数据块
-        await processStream();
-      };
+        return readStream();
+      }
 
       // 开始处理流数据
-      await processStream();
+      return readStream();
     },
-    getTitle(){
+
+    getTitle() {
       const uuid = this.$route.params.uuid
-      if(uuid){
-        console.log('uuid:',uuid)
-        const item = store.chatStorage.data.sidebar.find(v=>v.uuid==uuid)
+      if (uuid) {
+        console.log('uuid:', uuid)
+        const item = store.chatStorage.data.sidebar.find(v => v.uuid == uuid)
         return item.title
       }
       return 'Aha'
     }
 
   },
-  mounted(){
-    
+  mounted() {
+
   },
-  updated(){
-    if(this.$route.params.uuid){
-      try{
+  updated() {
+    if (this.$route.params.uuid) {
+      try {
         this.msgList = store.getMsgListByUuid(this.$route.params.uuid)
 
-      }catch(e){
+      } catch (e) {
         console.log('获取消息列表失败.', this.$route.params.uuid)
       }
     }
@@ -144,12 +151,12 @@ export default {
 </script>
 
 <template>
-  <div  class="right  h-full  w-full" >
-    <div  class="mx-4 h-full flex flex-col  ">
+  <div class="right  h-full  w-full">
+    <div class="mx-4 h-full flex flex-col  ">
       <!-- <div class="basis-1/12 border flex justify-start items-center px-4 lg:hidden ">
         {{ getTitle() }}
       </div> -->
-      <div  class=" basis-5/6 px-4 border   overflow-auto">
+      <div class=" basis-5/6 px-4 border   overflow-auto">
         <div v-if="this.$route.path == '/'" class="text-center text-slate-300">Aha</div>
         <div v-else class="pt-2">
           <MessageItem v-for="(msgItem, index) in msgList" :key="index" :role="msgItem['role']" :msg="msgItem['msg']"

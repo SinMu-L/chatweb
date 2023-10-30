@@ -30,8 +30,6 @@ export default {
                 <div v-if="!msgReload"
                     class=" w-auto max-w-[80%] min-w-[1%] overflow-ellipsis word-break  bg-blue-200  whitespace-no-wrap break-words rounded-sm p-2 my-1">
                     <Markdown :source="msg" />
-
-
                 </div>
 
                 <div v-else
