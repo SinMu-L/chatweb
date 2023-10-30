@@ -122,12 +122,14 @@ export default {
     },
 
     getTitle() {
-      const uuid = this.$route.params.uuid
-      if (uuid) {
-        console.log('uuid:', uuid)
-        const item = store.chatStorage.data.sidebar.find(v => v.uuid == uuid)
-        return item.title
+      if(this.$route.fullPath.indexOf('/chat/') > -1){
+        const uuid = this.$route.params.uuid
+        const item1 = store.chatStorage.data.sidebar.find(v=>v.uuid = uuid)
+        if(item1 !== undefined){
+          return item1.title
+        }
       }
+      
       return 'Aha'
     }
 
@@ -159,7 +161,7 @@ export default {
       <div class=" basis-5/6 px-4 border   overflow-auto">
         <div v-if="this.$route.path == '/'" class="text-center text-slate-300">Aha</div>
         <div v-else class="pt-2">
-          <MessageItem v-for="(msgItem, index) in msgList" :key="index" :role="msgItem['role']" :msg="msgItem['msg']"
+          <MessageItem v-for="(msgItem) in msgList" :key="msgItem['time']" :role="msgItem['role']" :msg="msgItem['msg']"
             :time="msgItem['time']" :msgReload="msgItem['msgReload']"></MessageItem>
         </div>
       </div>

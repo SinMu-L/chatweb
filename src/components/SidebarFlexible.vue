@@ -88,7 +88,7 @@ export default {
 </script>
 
 <template>
-    <div class="left absolute w-4/5 bg-white  sm:relative sm:w-1/5 px-2 h-full border flex flex-col border-red-500" v-show="store.isShow">
+    <div class="left absolute w-4/5 bg-white  sm:relative sm:w-1/5 px-2 h-full border flex flex-col " v-show="store.isShow">
         <div class=" basis-1/12">
             <div @click="addChatItem"
                 class=" m-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
