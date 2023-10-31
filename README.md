@@ -128,13 +128,40 @@ vue3
 1. 现象描述：在触发`addChatItem()`事件之前，`store.chatStorage.data.sidebar`的数据如下
 
 ```json
-[{"uuid":1,"title":"New Chatxxx","enEdit":false},{"uuid":478479,"title":"New Chat-478479","enEdit":false}]
+[
+    {
+        "uuid": 1,
+        "title": "New Chatxxx",
+        "enEdit": false
+    },
+    {
+        "uuid": 478479,
+        "title": "New Chat-478479",
+        "enEdit": false
+    }
+]
 ```
 
 2. 触发`addChatItem()`事件后，`store.chatStorage.data.sidebar`的数据如下
 
 ```json
-[{"uuid":"478479","title":"New Chatxxx","enEdit":false},{"uuid":478479,"title":"New Chat-478479","enEdit":false},{"uuid":646529,"title":"New Chat-646529","enEdit":false}]
+[
+    {
+        "uuid": "478479",
+        "title": "New Chatxxx",
+        "enEdit": false
+    },
+    {
+        "uuid": 478479,
+        "title": "New Chat-478479",
+        "enEdit": false
+    },
+    {
+        "uuid": 646529,
+        "title": "New Chat-646529",
+        "enEdit": false
+    }
+]
 ```
 
 一步步的排查发现，我在`addChatItem()`中使用了`router.push`,进而出现上述现象
