@@ -20,6 +20,7 @@ vue3
     ```shell
     npm run dev
     ```
+4. 复制`.env`文件，粘贴重命名为`.env.development`作为开发环境使用即可。
 
 
 ## Vue3 选项式基础
@@ -100,7 +101,7 @@ vue3
 问题15：侧壁栏添加新的item的时候宽度会改变，需要找到原因
 
 ✅问题16：侧边栏有2个item，当我先删除第一个item的时候，页面会跳转到404
-> 这里的原因是因为我绑定的key有问题，不止直接绑定循环里面的索引
+> 这里的原因是因为我绑定的key有问题，不是直接绑定循环里面的索引
 > 
 > 由
 > 
@@ -121,6 +122,26 @@ vue3
 > 参考： https://tailwind.nodejs.cn/docs/responsive-design
 
 问题18：考虑对接一个密码输入框
+
+问题19：侧边栏中第一个item的路由总是和最后一个item相同，会随着最后一个路由的变化而变化
+
+1. 现象描述：在触发`addChatItem()`事件之前，`store.chatStorage.data.sidebar`的数据如下
+
+```json
+[{"uuid":1,"title":"New Chatxxx","enEdit":false},{"uuid":478479,"title":"New Chat-478479","enEdit":false}]
+```
+
+2. 触发`addChatItem()`事件后，`store.chatStorage.data.sidebar`的数据如下
+
+```json
+[{"uuid":"478479","title":"New Chatxxx","enEdit":false},{"uuid":478479,"title":"New Chat-478479","enEdit":false},{"uuid":646529,"title":"New Chat-646529","enEdit":false}]
+```
+
+一步步的排查发现，我在`addChatItem()`中使用了`router.push`,进而出现上述现象
+
+我的思路是看看`router.push` 里面到底是哪里修改了值，后来通过`Vue.js devtools插件`发现`store.chatStorage.data.sidebar`中的数据并没有改变，只是`SidebarFlexible.vue组件`中访问 `store.chatStorage.data.sidebar`的时候发生了变化。不知道是为什么
+
+问题20：需要对接一下会话
 
 等待下一次DOM刷新 
 资料：https://cn.vuejs.org/api/general.html#nexttick

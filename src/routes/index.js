@@ -5,12 +5,10 @@ var router = createRouter({
     history: createWebHashHistory(),
     routes
 })
-
-
 router.afterEach((to, from, next)=>{
     if(to.matched.length <= 0){
         console.log('未匹配')
-        router.replace('/')
+        router.push('/')
         return false
     }else{
         // 是否是 /chat/xxx
@@ -20,7 +18,7 @@ router.afterEach((to, from, next)=>{
             const index = store.chatStorage.data.sidebar.findIndex(v=>v.uuid == uuid)
             console.log('uuid:', to.params.uuid, 'index: ',index)
             if(index>-1) return true
-            return router.replace('/')
+            return router.push('/')
 
         }else{
             return true

@@ -5,6 +5,7 @@ import { store } from '../store';
 import { NButton, NDrawer, NDrawerContent } from "naive-ui";
 
 
+
 export default {
     data() {
         return {
@@ -19,6 +20,7 @@ export default {
         NDrawer,
         NDrawerContent
     },
+    
     methods: {
         sidebarFlex(e) {
             // return false
@@ -36,7 +38,7 @@ export default {
 
                 console.log('删除。。')
                 if (store.chatStorage.data.chat.length > 0) {
-                    console.log("即将跳转的路由：",store.chatStorage.data.chat[0].uuid)
+                    console.log("即将跳转的路由：", store.chatStorage.data.chat[0].uuid)
                     this.$router.replace(`/chat/${store.chatStorage.data.chat[0].uuid}`)
                 } else {
                     this.$router.replace('/')
@@ -51,14 +53,13 @@ export default {
             const index = store.chatStorage.data.chat.findIndex(v => v.uuid == uuid)
             // 删除sidebar
             store.chatStorage.data.sidebar[index].enEdit = !store.chatStorage.data.sidebar[index].enEdit
-            // this.ChatItemData[index - 1]['enEdit'] = !this.ChatItemData[index - 1]['enEdit']
         },
         addChatItem() {
+            
             const idx = this.randomUuid()
-            console.log(idx)
             store.chatStorage.data.sidebar.push({
                 uuid: idx,
-                title: 'New Chat',
+                title: `New Chat-${idx}`,
                 enEdit: false
             })
 
@@ -71,9 +72,13 @@ export default {
                     "msgReload": false
                 }],
             })
-            this.$router.push(`/chat/${idx}`)
+            console.log(JSON.stringify(store.chatStorage.data.sidebar))
+            this.$router.push({name:'chat', params:{uuid: idx}})
+
+
         },
         randomUuid() {
+
             const len = 6;
             var index = '';
             for (let i = 0; i < len; i++) {
@@ -82,8 +87,11 @@ export default {
                 index += t
             }
             return Number(index)
-        }
-    }
+        },
+
+        
+    },
+    
 }
 </script>
 
@@ -96,7 +104,7 @@ export default {
         </div>
         <div class="basis-10/12 overflow-auto  ">
 
-            <ChatItem v-for="(chat) in store.chatStorage.data.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
+            <ChatItem v-for="chat in store.chatStorage.data.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
                 v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
                 @enableEdit="enableEditChatItem"></ChatItem>
         </div>
@@ -119,7 +127,6 @@ export default {
 
 
 <style scope>
-
 :root {
     --main-bg-color: rgb(213, 214, 216);
 }

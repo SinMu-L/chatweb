@@ -22,9 +22,6 @@ export default {
             // 阻止冒泡,如果不添加会触发 router-link 的跳转
             e.preventDefault();
         },
-        activeItem(){
-            return this.$route.path == this.path ? 'bg-gray-200': ''
-        },
 
     },
     props: {
@@ -41,12 +38,13 @@ export default {
 </script>
 
 <template>
-    <router-link :to="path">
+    <router-link :to="`/chat/${idx}`"  exact-active-class="bg-red-500">
 
-        <div class="c-border-center flex flex-row justify-start items-center h-12 " :class="activeItem()" >
+        <div class="c-border-center flex flex-row justify-start items-center h-12 "  >
             <div class=" w-1/6   h-full">
                 <div class="mx-1 h-full flex justify-center items-center  "><i class="iconfont icon-chat1196057easyiconnet1 "></i></div>
             </div>
+       
             <div class=" w-4/6  h-full">
                 <div class=" truncate h-full flex justify-center items-center  ">
                 <input v-if="this.$route.path == path" ref="input"  
@@ -60,7 +58,7 @@ export default {
             </div>
             </div>
             <div class=" w-1/6  h-full">
-                <div class="flex justify-center items-center h-full" v-if="this.$route.path == path">
+                <div class="flex justify-center items-center h-full">
                     <div class="mx-0.5 " @click="editItem">
                         <EditIcon></EditIcon>
                     </div>
