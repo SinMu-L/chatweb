@@ -36,8 +36,8 @@ export default {
         this.readonly = true
 
         const uuid = this.$route.params.uuid
-        const index = store.chatStorage.data.chat.findIndex(v => v.uuid == uuid)
-        store.chatStorage.data.chat[index].data.push({
+        const index = store.chatStorage.chat.findIndex(v => v.uuid == uuid)
+        store.chatStorage.chat[index].data.push({
           time: (new Date()).toLocaleString("sv-SE"),
           msg: this.text,
           role: "user",
@@ -46,7 +46,7 @@ export default {
 
         var t = this.text
         this.text = ""
-        store.chatStorage.data.chat[index].data.push({
+        store.chatStorage.chat[index].data.push({
           time: (new Date()).toLocaleString("sv-SE"),
           msg: "",
           role: "AI",
@@ -86,6 +86,7 @@ export default {
         if (done) {
           console.log('Stream reading complete');
           this.readonly = false
+          store.chatStorage.chat[index].data[store.chatStorage.chat[index].data.length - 1].msgReload = false
           return;
         }
 
@@ -104,8 +105,8 @@ export default {
           let data;
           try{
             data = JSON.parse(res);
-            store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length - 1].msgReload = false
-            store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length - 1].msg += `${data.choices[0].delta.content}`
+            store.chatStorage.chat[index].data[store.chatStorage.chat[index].data.length - 1].msgReload = false
+            store.chatStorage.chat[index].data[store.chatStorage.chat[index].data.length - 1].msg += `${data.choices[0].delta.content}`
           }catch(e){
             // console.error('Error parsing JSON:', e);
             continue
