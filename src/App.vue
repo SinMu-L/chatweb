@@ -1,7 +1,7 @@
 <script setup>
 
 import SidebarFlexible from './components/SidebarFlexible.vue'
-import MainArea from './components/MainArea.vue';
+import Login from './components/Login.vue';
 
 
 </script>
@@ -9,7 +9,7 @@ import MainArea from './components/MainArea.vue';
 <template>
   <div class="my-web ">
     <div class="  main flex">
-      
+      <Login ></Login>
       <SidebarFlexible></SidebarFlexible>
       <!-- <MainArea></MainArea> -->
       <router-view></router-view>

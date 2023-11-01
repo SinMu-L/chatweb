@@ -43,6 +43,10 @@ export const store = reactive({
 
     "expire": null
   },
+  auth: {
+    secret: '',
+    expire: '',
+  },
   getMsgListByUuid(uuid) {
     var data = this.chatStorage.chat.find(v => v.uuid == uuid)
     return data.data

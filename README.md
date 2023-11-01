@@ -125,8 +125,9 @@ vue3
 >                @enableEdit="enableEditChatItem"></ChatItem>
 >    ```
 
-✅问题17：怎么做移动端自适应？
+问题17：怎么做移动端自适应？
 > 参考： https://tailwind.nodejs.cn/docs/responsive-design
+> 大致的用了一下，体验感巨差。
 
 问题18：考虑对接一个密码输入框
 
@@ -177,7 +178,7 @@ vue3
 
 真的人嘛了，低级错误，写成`find(v=>v.uuid=uuid)` 应该写成`find(v=>v.uuid==uuid)` 
 
-问题20：需要对接一下会话
+✅问题20：需要对接一下多轮会话
 
 等待下一次DOM刷新 
 资料：https://cn.vuejs.org/api/general.html#nexttick
