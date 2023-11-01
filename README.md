@@ -128,6 +128,7 @@ vue3
 问题17：怎么做移动端自适应？
 > 参考： https://tailwind.nodejs.cn/docs/responsive-design
 > 大致的用了一下，体验感巨差。
+> 后面还是用组件优化一下吧
 
 问题18：考虑对接一个密码输入框
 
