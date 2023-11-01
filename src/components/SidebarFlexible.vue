@@ -27,19 +27,15 @@ export default {
             store.isShow = !store.isShow
         },
         popChaItemData(idx) {
-            console.log('要删除的路由：', idx)
 
-            if (store.chatStorage.data.chat.length > 0) {
-                const index = store.chatStorage.data.chat.findIndex(v => v.uuid == idx)
-                console.log("index:", index)
+            if (store.chatStorage.chat.length > 0) {
+                const index = store.chatStorage.chat.findIndex(v => v.uuid == idx)
                 // 删除sidebar
-                store.chatStorage.data.sidebar.splice(index, 1)
-                store.chatStorage.data.chat.splice(index, 1)
+                store.chatStorage.sidebar.splice(index, 1)
+                store.chatStorage.chat.splice(index, 1)
 
-                console.log('删除。。')
-                if (store.chatStorage.data.chat.length > 0) {
-                    console.log("即将跳转的路由：", store.chatStorage.data.chat[0].uuid)
-                    this.$router.replace(`/chat/${store.chatStorage.data.chat[0].uuid}`)
+                if (store.chatStorage.chat.length > 0) {
+                    this.$router.replace(`/chat/${store.chatStorage.chat[0].uuid}`)
                 } else {
                     this.$router.replace('/')
                 }
@@ -50,20 +46,20 @@ export default {
         },
         enableEditChatItem(uuid) {
             console.log(uuid)
-            const index = store.chatStorage.data.chat.findIndex(v => v.uuid == uuid)
+            const index = store.chatStorage.chat.findIndex(v => v.uuid == uuid)
             // 删除sidebar
-            store.chatStorage.data.sidebar[index].enEdit = !store.chatStorage.data.sidebar[index].enEdit
+            store.chatStorage.sidebar[index].enEdit = !store.chatStorage.sidebar[index].enEdit
         },
         addChatItem() {
             
             const idx = this.randomUuid()
-            store.chatStorage.data.sidebar.push({
+            store.chatStorage.sidebar.push({
                 uuid: idx,
                 title: `New Chat-${idx}`,
                 enEdit: false
             })
 
-            store.chatStorage.data.chat.push({
+            store.chatStorage.chat.push({
                 uuid: idx,
                 data: [{
                     "time": "",
@@ -72,7 +68,6 @@ export default {
                     "msgReload": false
                 }],
             })
-            console.log(JSON.stringify(store.chatStorage.data.sidebar))
             this.$router.push({name:'chat', params:{uuid: idx}})
 
 
@@ -99,12 +94,12 @@ export default {
     <div class="left absolute w-4/5 bg-white  sm:relative sm:w-1/5 px-2 h-full border flex flex-col " v-show="store.isShow">
         <div class=" basis-1/12">
             <div @click="addChatItem"
-                class=" m-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
+                class=" my-2 py-2 px-6 border rounded-md border-gray-300 border-dotted font-medium flex justify-center items-center hover:bg-gray-300 hover:border-5 hover:border-gray-600/5">
                 新建聊天</div>
         </div>
-        <div class="basis-10/12 overflow-auto  ">
+        <div class="basis-10/12 overflow-auto w-ful ">
 
-            <ChatItem v-for="chat in store.chatStorage.data.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
+            <ChatItem v-for="chat in store.chatStorage.sidebar" :key="chat['uuid']" :idx="chat['uuid']"
                 v-model:content="chat['title']" :disabled="chat['enEdit']" @del="popChaItemData"
                 @enableEdit="enableEditChatItem"></ChatItem>
         </div>

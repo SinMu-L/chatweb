@@ -53,7 +53,6 @@ export default {
           msgReload: true
         })
 
-        console.log(t)
         await this.startStream(t, index)
         // this.getStreamV2(t,index)
       }
@@ -105,7 +104,6 @@ export default {
           let data;
           try{
             data = JSON.parse(res);
-            console.log('Received data:', data.choices[0].delta.content);
             store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length - 1].msgReload = false
             store.chatStorage.data.chat[index].data[store.chatStorage.data.chat[index].data.length - 1].msg += `${data.choices[0].delta.content}`
           }catch(e){
@@ -124,7 +122,7 @@ export default {
     getTitle() {
       if(this.$route.fullPath.indexOf('/chat/') > -1){
         const uuid = this.$route.params.uuid
-        const item1 = store.chatStorage.data.sidebar.find(v=>v.uuid = uuid)
+        const item1 = store.chatStorage.sidebar.find(v=>v.uuid == uuid)
         if(item1 !== undefined){
           return item1.title
         }

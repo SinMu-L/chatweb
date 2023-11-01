@@ -98,7 +98,14 @@ vue3
 >
 > 在 popSidebar 方法中阻止之间冒泡就行，或者添加事件委托(还不会事件委托)
 
-问题15：侧壁栏添加新的item的时候宽度会改变，需要找到原因
+✅问题15：侧壁栏添加新的item的时候宽度会改变，需要找到原因
+> 由于我加了一个自定义样式，
+> ```css
+>   .c-border-center {
+>    @apply border border-gray-300  rounded-md   flex justify-center items-center  m-2 p-2;
+> }
+> ```
+> 每次新增item的时候，由于`m-2`和`y-2` 会将父元素撑开。后面改成了` my-2 py-2`就恢复了
 
 ✅问题16：侧边栏有2个item，当我先删除第一个item的时候，页面会跳转到404
 > 这里的原因是因为我绑定的key有问题，不是直接绑定循环里面的索引
@@ -123,7 +130,7 @@ vue3
 
 问题18：考虑对接一个密码输入框
 
-问题19：侧边栏中第一个item的路由总是和最后一个item相同，会随着最后一个路由的变化而变化
+✅问题19：侧边栏中第一个item的路由总是和最后一个item相同，会随着最后一个路由的变化而变化
 
 1. 现象描述：在触发`addChatItem()`事件之前，`store.chatStorage.data.sidebar`的数据如下
 
@@ -167,6 +174,8 @@ vue3
 一步步的排查发现，我在`addChatItem()`中使用了`router.push`,进而出现上述现象
 
 我的思路是看看`router.push` 里面到底是哪里修改了值，后来通过`Vue.js devtools插件`发现`store.chatStorage.data.sidebar`中的数据并没有改变，只是`SidebarFlexible.vue组件`中访问 `store.chatStorage.data.sidebar`的时候发生了变化。不知道是为什么
+
+真的人嘛了，低级错误，写成`find(v=>v.uuid=uuid)` 应该写成`find(v=>v.uuid==uuid)` 
 
 问题20：需要对接一下会话
 

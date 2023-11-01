@@ -22,6 +22,9 @@ export default {
             // 阻止冒泡,如果不添加会触发 router-link 的跳转
             e.preventDefault();
         },
+        activeItem(){
+            return this.$route.path == this.path ? 'bg-red-200': ''
+        },
 
     },
     props: {
@@ -38,7 +41,7 @@ export default {
 </script>
 
 <template>
-    <router-link :to="`/chat/${idx}`"  exact-active-class="bg-red-500">
+    <router-link :to="`/chat/${idx}`"  class=" bg-gray-200">
 
         <div class="c-border-center flex flex-row justify-start items-center h-12 "  >
             <div class=" w-1/6   h-full">
@@ -49,12 +52,12 @@ export default {
                 <div class=" truncate h-full flex justify-center items-center  ">
                 <input v-if="this.$route.path == path" ref="input"  
                 :disabled="!disabled" type="text" id="simple-search"
-                    class="truncate   text-gray-900 text-sm rounded-md px-2  " 
+                    class="truncate   text-gray-900 text-sm rounded-md  " 
                     :class="!disabled?'border-none':'border'"
                     :value="[content ? content: idx]"
                     @input="$emit('update:content', $event.target.value)">
                 
-                <span v-else class="truncate   text-gray-900 text-sm rounded-md px-2 w-full" >{{ content ? content: idx }}</span>
+                <span v-else class="truncate   text-gray-900 text-sm rounded-md w-full" >{{ content ? content: idx }}</span>
             </div>
             </div>
             <div class=" w-1/6  h-full">
@@ -72,4 +75,9 @@ export default {
     </router-link>
 </template>
 
-<style scoped></style>
+<style scoped>
+.router-link-active > .c-border-center{
+    --tw-bg-opacity: 1;
+    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+</style>

@@ -4,7 +4,6 @@ import SidebarFlexible from './components/SidebarFlexible.vue'
 import MainArea from './components/MainArea.vue';
 
 
-// console.log(import.meta.env.VITE_APP_BASE_PATH)
 </script>
 
 <template>

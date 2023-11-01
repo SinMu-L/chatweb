@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 .c-border-center {
-    @apply border border-gray-300  rounded-md   flex justify-center items-center m-2 p-2;
+    @apply border border-gray-300  rounded-md   flex justify-center items-center  my-2 py-2;
 }
 .word-break{
     word-wrap: break-word;
