@@ -7,7 +7,7 @@ import Login from './components/Login.vue';
 </script>
 
 <template>
-  <div class="my-web ">
+  <div class="my-web">
     <div class="  main flex">
       <Login ></Login>
       <SidebarFlexible></SidebarFlexible>
@@ -25,7 +25,7 @@ import Login from './components/Login.vue';
   /* background-color: #ddd; */
   width: 100%;
   height: 100%;
-  padding: 1%;
+  /* padding: 1%; */
 }
 
 .main {
@@ -33,7 +33,7 @@ import Login from './components/Login.vue';
   height: 100%;
   /* x 偏移量 | y 偏移量 | 阴影模糊半径 | 阴影扩散半径 | 阴影颜色*/
   box-shadow: 0px 5px 10px 1px #ddd;
-  border: 1px #ddd solid;
+  /* border: 1px #ddd solid; */
   border-radius: 1%;
 
 }
