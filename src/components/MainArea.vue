@@ -70,7 +70,7 @@ export default {
         "mode": "cors",
         "body": JSON.stringify({
           model: store.model,
-          messages: [{ role: "user", content: `${prompt}` }],
+          messages: this.buildMessagePromt(index),
           temperature: store.Temperatures,
           top_p: store.Top_p,
           stream: true,
@@ -130,7 +130,19 @@ export default {
       }
       
       return 'Aha'
-    }
+    },
+    buildMessagePromt(index){
+      var res = []
+      store.chatStorage.chat[index].data.forEach(v=>{
+        const role = v.role=='AI' ? 'assistant' : 'user'
+        res.push({
+          role: role,
+          content: v.msg
+        })
+      })
+
+      return res
+    },
 
   },
   mounted() {
