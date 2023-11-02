@@ -136,6 +136,7 @@ const menuOptions = reactive([
     width: 100%;
     margin-bottom: 1rem;
     margin-top: 1rem;
+
 }
 
 .main {
