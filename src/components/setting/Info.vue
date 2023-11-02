@@ -1,3 +1,0 @@
-<template>
-    Info
-</template>

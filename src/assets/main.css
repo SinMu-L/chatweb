@@ -1,8 +1,6 @@
 @import './base.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 .c-border-center {
     @apply border border-gray-300  rounded-md   flex justify-center items-center  my-2 py-2;

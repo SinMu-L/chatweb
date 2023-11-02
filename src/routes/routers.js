@@ -1,13 +1,7 @@
 
-
-import {store} from '../store.js'
-import MainArea from '../components/MainArea.vue';
-import NotFound from '../components/NotFound.vue'
-
-
 var routes = [
-  {path: "/",component: MainArea, name: 'root'},
-  {path: "/chat/:uuid",component: MainArea, name:'chat'},
-  {path: "/404",component: NotFound},
+  {path: "/",template: "<div>这里是根路由</div>", name: 'root'},
+  {path: "/chat/:uuid", template: "这里是 /chat/:uuid", name:'chat'},
+  {path: "/404",template: "这里是404"},
 ];
 export default routes;
