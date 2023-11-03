@@ -1,11 +1,10 @@
 <script setup>
-import Main from './components/Main.vue'
+import ContainerTemplate from './components/ContainerTemplate.vue'
 
 </script>
 
 <template>
-  <!-- <Main></Main> -->
-  
+  <ContainerTemplate></ContainerTemplate>
 </template>
 
 <style scoped>
