@@ -1,6 +1,9 @@
 <script setup>
 import { reactive, h } from 'vue';
-import { NLayout, NLayoutSider, NLayoutHeader,NLayoutContent, NLayoutFooter, NIcon, NMenu, NButton } from 'naive-ui';
+import {
+    NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NLayoutFooter,
+    NIcon, NButton, NGrid, NGridItem
+} from 'naive-ui';
 import {
     BookOutline as BookIcon,
     PersonOutline as PersonIcon,
@@ -11,7 +14,7 @@ import {
 function renderIcon(icon) {
     return () => h(NIcon, null, { default: () => h(icon) })
 }
-function tmp(){
+function tmp() {
     console.log('123...');
 }
 
@@ -103,10 +106,8 @@ const menuOptions = reactive([
 
 <template>
     <n-layout has-sider class="main">
-        <n-layout-sider content-style="padding: 6px;" collapse-mode="width" :collapsed-width="80" :width="240"
-            show-trigger="arrow-circle" :native-scrollbar="true" :bordered="true"
-            :on-update:collapsed="tmp"
-            >
+        <n-layout-sider content-style="padding: 6px;" collapse-mode="width" :collapsed-width="120" :width="300"
+            show-trigger="arrow-circle" :native-scrollbar="true" :bordered="true" :on-update:collapsed="tmp">
             <n-layout>
 
                 <n-button class="add-menu">
@@ -118,7 +119,45 @@ const menuOptions = reactive([
                     <span>Default</span>
                 </n-button>
             </n-layout>
-            <n-menu :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" />
+            <n-layout>
+                <n-grid :y-gap="10" :cols="1">
+                    <n-grid-item>
+                        <n-grid x-gap="0" :cols="4" y-gap="4">
+                            <n-grid-item>
+                                <div class="light-green">1</div>
+                            </n-grid-item>
+                            <n-grid-item :span="2">
+                                <div class="green">
+                                    2
+                                </div>
+                            </n-grid-item>
+                            <n-grid-item>
+                                <div class="light-green">3</div>
+                            </n-grid-item>
+                        </n-grid>
+                    </n-grid-item>
+                    <n-grid-item>
+                        <n-grid x-gap="0" :cols="4" y-gap="4">
+                            <n-grid-item>
+                                <div class="light-green">1</div>
+                            </n-grid-item>
+                            <n-grid-item :span="2">
+                                <div class="green">
+                                    2
+                                </div>
+                            </n-grid-item>
+                            <n-grid-item>
+                                <div class="light-green">3</div>
+                            </n-grid-item>
+                        </n-grid>
+                    </n-grid-item>
+                </n-grid>
+
+
+
+
+            </n-layout>
+
 
         </n-layout-sider>
         <n-layout class="left-area">
@@ -132,6 +171,16 @@ const menuOptions = reactive([
 </template>
 
 <style scoped>
+.light-green {
+    height: auto;
+    background-color: rgba(0, 128, 0, 0.12);
+}
+
+.green {
+    height: auto;
+    background-color: rgba(0, 128, 0, 0.24);
+}
+
 .add-menu {
     width: 100%;
     margin-bottom: 1rem;
