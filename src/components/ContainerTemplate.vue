@@ -4,14 +4,17 @@ import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
 import { Edit, Delete } from '@vicons/carbon'
 
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router'
 
+const router = useRouter()
+const route = useRoute()
+
+var input_area_value = ref('')
 var left_data = reactive({
     left_list: [
         { uuid: 1, title: 'New Chat1', enable_edit: false },
         { uuid: 2, title: 'New Chat2', enable_edit: false },
-        { uuid: 3, title: 'New Chat3', enable_edit: false },
-        { uuid: 4, title: 'New Chat4', enable_edit: false },
     ],
     chat: [
         {
@@ -75,18 +78,32 @@ function submit(index) {
     editLeftListEle(index)
 }
 
-function getMsgList(uuid){
-    
-    var index = left_data.chat.findIndex(v => v.uuid == uuid)
-    return left_data.chat[index].msg_list
-    
+function getMsgList(uuid) {
+    console.log(uuid)
+    if (uuid) {
+        var index = left_data.chat.findIndex(v => v.uuid == uuid)
+        return left_data.chat[index].msg_list
+    } else {
+        return []
+    }
+
 }
 
-function addMessageListItem(uuid){
+function addMessageListItem(uuid) {
+
     var index = left_data.chat.findIndex(v => v.uuid == uuid)
-    left_data.chat[index].msg_list.push({ content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false })
+    left_data.chat[index].msg_list.push({ 
+        content: input_area_value.value,
+        create_time: '2023-11-09 11:50:23',
+        reversion: false, 
+        msgload: false 
+    })
     var ele = document.getElementById("msgArea")
-    ele.scrollTop = ele.scrollHeight  + ele.offsetHeight
+    ele.scrollTop = ele.scrollHeight + ele.offsetHeight
+}
+
+function sendMsg() {
+
 }
 
 </script>
@@ -100,34 +117,41 @@ function addMessageListItem(uuid){
                     <n-button class=" w-4/5" @click="addLeftListEle">New Chat</n-button>
                 </div>
                 <!-- 列表 -->
-                <div class="basis-10/12  overflow-auto border  ">
-                    <div v-for=" item in left_data.left_list" :key="item.uuid" class="m-2 flex flex-row justify-between items-center 
-                        border border-gray-400  rounded-md p-2  ">
-                        <div class=" w-4/5   flex items-center">
-                            <n-icon size="medium">
-                                <game-controller-outline />
-                            </n-icon>
-                            <div class=" truncate mx-2">
-                                <p v-if="!item.enable_edit" class=" truncate h-full">{{ item.title }}</p>
-                                <n-input v-else type="text" size="small" class=" h-full " :hidden="false"
-                                    v-model:value="item.title" @keyup.enter="submit(item.uuid)"></n-input>
-                            </div>
-                        </div>
-                        <div class="w-1/5 flex justify-center items-center">
-                            <n-button-group size="small" :vertical="false" :hidden="false">
-                                <n-button text size="" @click="editLeftListEle(item.uuid)">
-                                    <n-icon>
-                                        <Edit />
-                                    </n-icon>
-                                </n-button>
-                                <n-button text @click="delLeftListEle(item.uuid)">
-                                    <n-icon>
-                                        <Delete />
-                                    </n-icon>
-                                </n-button>
 
-                            </n-button-group>
-                        </div>
+                <div class="basis-10/12  overflow-auto border  ">
+
+                    <div v-for=" item in left_data.left_list" :key="item.uuid">
+                        <!-- 侧边栏输入框 -->
+                        <router-link :to="`/chat/${item.uuid}`" class="m-2 flex flex-row justify-between items-center 
+                        border border-gray-400  rounded-md p-2  ">
+
+                            <div class=" w-4/5 flex items-center">
+                                <n-icon size="medium">
+                                    <game-controller-outline />
+                                </n-icon>
+                                <div class=" truncate mx-2">
+                                    <p v-if="!item.enable_edit" class=" truncate h-full">{{ item.title }}</p>
+                                    <n-input v-else type="text" size="small" class=" h-full " :hidden="false"
+                                        v-model:value="item.title" @keyup.enter="submit(item.uuid)"></n-input>
+                                </div>
+                            </div>
+                            <div class="w-1/5 flex justify-center items-center "
+                                :class="route.params.uuid != item.uuid ? 'hidden' : ''">
+                                <n-button-group size="small" :vertical="false" :hidden="false">
+                                    <n-button text size="" @click="editLeftListEle(item.uuid)">
+                                        <n-icon>
+                                            <Edit />
+                                        </n-icon>
+                                    </n-button>
+                                    <n-button text @click="delLeftListEle(item.uuid)">
+                                        <n-icon>
+                                            <Delete />
+                                        </n-icon>
+                                    </n-button>
+
+                                </n-button-group>
+                            </div>
+                        </router-link>
                     </div>
 
 
@@ -159,14 +183,16 @@ function addMessageListItem(uuid){
         </div>
         <div class=" col-span-10 ">
             <div class="flex flex-col h-screen">
+                <!-- 这里是IM区域 -->
                 <div class=" basis-11/12 w-full p-12 overflow-auto" id="msgArea">
-                    <!-- 这里是IM区域 -->                  
-                    <div  v-for="(msglist,index) in getMsgList(1)" :key="index" class=" flex flex-col mt-1  ">
-                        <div :class="msglist.reversion ? 'flex-row-reverse':'flex-row'"  class=" flex justify-start items-center h-10">
+                    <div v-for="(msglist, index) in getMsgList(route.params.uuid)" :key="index"
+                        class=" flex flex-col mt-1  ">
+                        <div :class="msglist.reversion ? 'flex-row-reverse' : 'flex-row'"
+                            class=" flex justify-start items-center h-10">
                             <img class=" rounded-full h-10 w-10" src="../assets/icon.jpg" alt="">
                             <span class="ml-4 text-sm">{{ msglist.create_time }}</span>
                         </div>
-                        <div class="flex  " :class="msglist.reversion ? 'flex-row-reverse':'flex-row'" >
+                        <div class="flex  " :class="msglist.reversion ? 'flex-row-reverse' : 'flex-row'">
                             <div
                                 class=" bg-blue-200 w-auto max-w-[80%] min-w-[1%] break-words overflow-ellipsis rounded-sm p-2 my-1">
                                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Amet magni excepturi qui quasi
@@ -182,14 +208,21 @@ function addMessageListItem(uuid){
                     <!-- 这里是输入框 -->
                     <div class="  p-2">
 
-                        <n-input @keyup.ctrl.enter="addMessageListItem(1)" placeholder="自动调整尺寸" 
-                        type="textarea" size="tiny" :autosize="{
-                            minRows: 3,
-                            maxRows: 5
-                                            }" />
+                        <n-input @keyup.ctrl.enter="addMessageListItem(route.params.uuid)" placeholder="自动调整尺寸"
+                            v-model:value="input_area_value" type="textarea" size="tiny" :autosize="{
+                                minRows: 3,
+                                maxRows: 5
+                            }" />
                     </div>
+                </div>
             </div>
         </div>
     </div>
-</div></template>
+</template>
 
+
+<style scoped>
+.router-link-active {
+    border-color: #18a058;
+}
+</style>
