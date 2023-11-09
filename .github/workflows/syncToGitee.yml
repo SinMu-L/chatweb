@@ -3,12 +3,21 @@ on:
   push:
     branches:
       - master
+      - naiveui_refactor
 jobs:
   repo-sync:
     runs-on: ubuntu-latest
     steps:
       - name: Mirror the Github organization repos to Gitee.
         uses: Yikun/hub-mirror-action@master
+        with:
+          src: 'github/SinMu-L'
+          dst: 'gitee/SinMu-L'
+          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+          dst_token:  ${{ secrets.GITEE_TOKEN }}
+          static_list: ${{ github.event.repository.name }}
+      - name: Mirror the Github organization repos to Gitee.
+        uses: Yikun/hub-mirror-action@naiveui_refactor
         with:
           src: 'github/SinMu-L'
           dst: 'gitee/SinMu-L'
