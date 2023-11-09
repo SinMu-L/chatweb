@@ -12,7 +12,35 @@ var left_data = reactive({
         { uuid: 2, title: 'New Chat2', enable_edit: false },
         { uuid: 3, title: 'New Chat3', enable_edit: false },
         { uuid: 4, title: 'New Chat4', enable_edit: false },
+    ],
+    chat: [
+        {
+            uuid: 1, msg_list: [
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                // { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
+                // { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                // { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+            ]
+        },
+        {
+            uuid: 2, msg_list: [
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+            ]
+        },
     ]
+
 })
 
 function editLeftListEle(uuid) {
@@ -45,6 +73,20 @@ function randomUuid() {
 
 function submit(index) {
     editLeftListEle(index)
+}
+
+function getMsgList(uuid){
+    
+    var index = left_data.chat.findIndex(v => v.uuid == uuid)
+    return left_data.chat[index].msg_list
+    
+}
+
+function addMessageListItem(uuid){
+    var index = left_data.chat.findIndex(v => v.uuid == uuid)
+    left_data.chat[index].msg_list.push({ content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false })
+    var ele = document.getElementById("msgArea")
+    ele.scrollTop = ele.scrollHeight  + ele.offsetHeight
 }
 
 </script>
@@ -116,22 +158,38 @@ function submit(index) {
             </div>
         </div>
         <div class=" col-span-10 ">
-            <div class="flex flex-col h-screen  bg-blue-100">
-                <div class=" basis-11/12 bg-red-50 w-full">
-                    <!-- 这里是IM区域 -->
+            <div class="flex flex-col h-screen">
+                <div class=" basis-11/12 w-full p-12 overflow-auto" id="msgArea">
+                    <!-- 这里是IM区域 -->                  
+                    <div  v-for="(msglist,index) in getMsgList(1)" :key="index" class=" flex flex-col mt-1  ">
+                        <div :class="msglist.reversion ? 'flex-row-reverse':'flex-row'"  class=" flex justify-start items-center h-10">
+                            <img class=" rounded-full h-10 w-10" src="../assets/icon.jpg" alt="">
+                            <span class="ml-4 text-sm">{{ msglist.create_time }}</span>
+                        </div>
+                        <div class="flex  " :class="msglist.reversion ? 'flex-row-reverse':'flex-row'" >
+                            <div
+                                class=" bg-blue-200 w-auto max-w-[80%] min-w-[1%] break-words overflow-ellipsis rounded-sm p-2 my-1">
+                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Amet magni excepturi qui quasi
+                                delectus rem earum nisi! Dicta culpa et alias eius a, repellendus rem, provident, voluptate
+                                voluptatem totam animi.
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class=" basis-1/12   w-full">
                     <!-- 这里是输入框 -->
                     <div class="  p-2">
 
-                    <n-input placeholder="自动调整尺寸" type="textarea" size="tiny" :autosize="{
-                        minRows: 3,
-                        maxRows: 5
-                    }" />
+                        <n-input @keyup.ctrl.enter="addMessageListItem(1)" placeholder="自动调整尺寸" 
+                        type="textarea" size="tiny" :autosize="{
+                            minRows: 3,
+                            maxRows: 5
+                                            }" />
                     </div>
-                </div>
             </div>
         </div>
     </div>
-</template>
+</div></template>
 

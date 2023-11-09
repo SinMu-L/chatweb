@@ -29,4 +29,10 @@ vue3
 响应式布局的根本是不同的媒体查询
 
 
+## 小技巧
+
+[事件监听](https://cn.vuejs.org/guide/essentials/event-handling.html#system-modifier-keys)
+1. 监听回车事件：`@keyup.enter="event()"`
+2. 监听ctrl+enter：`@keyup.ctrl.enter="event()"`
+
 
