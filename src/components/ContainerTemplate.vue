@@ -2,30 +2,30 @@
 import { NButton, NInput, NIcon, NButtonGroup } from 'naive-ui'
 import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
-import { Edit,Delete } from '@vicons/carbon'
+import { Edit, Delete } from '@vicons/carbon'
 
 import { reactive } from 'vue';
 
 var left_data = reactive({
     left_list: [
-        {uuid: 1, title: 'New Chat1', enable_edit: false},
-        {uuid: 2, title: 'New Chat2', enable_edit: false},
-        {uuid: 3, title: 'New Chat3', enable_edit: false},
-        {uuid: 4, title: 'New Chat4', enable_edit: false},
+        { uuid: 1, title: 'New Chat1', enable_edit: false },
+        { uuid: 2, title: 'New Chat2', enable_edit: false },
+        { uuid: 3, title: 'New Chat3', enable_edit: false },
+        { uuid: 4, title: 'New Chat4', enable_edit: false },
     ]
 })
 
-function editLeftListEle(uuid){
-    var index = left_data.left_list.findIndex(v=>v.uuid == uuid)
+function editLeftListEle(uuid) {
+    var index = left_data.left_list.findIndex(v => v.uuid == uuid)
     left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit
 }
 
-function delLeftListEle(uuid){
-    var index = left_data.left_list.findIndex(v=>v.uuid == uuid)
-    left_data.left_list.splice(index,1)
+function delLeftListEle(uuid) {
+    var index = left_data.left_list.findIndex(v => v.uuid == uuid)
+    left_data.left_list.splice(index, 1)
 }
 
-function addLeftListEle(){
+function addLeftListEle() {
     const uuid = randomUuid()
     left_data.left_list.push({
         uuid: uuid,
@@ -34,16 +34,16 @@ function addLeftListEle(){
     })
 }
 
-function randomUuid(){
+function randomUuid() {
     var len = 9
     var uuid = '';
-    for(let i=0;i<len;i++){
-        uuid += Math.floor(Math.random() * 10  )
+    for (let i = 0; i < len; i++) {
+        uuid += Math.floor(Math.random() * 10)
     }
-    return Number(uuid,10)
+    return Number(uuid, 10)
 }
 
-function submit(index){
+function submit(index) {
     editLeftListEle(index)
 }
 
@@ -62,18 +62,17 @@ function submit(index){
                     <div v-for=" item in left_data.left_list" :key="item.uuid" class="m-2 flex flex-row justify-between items-center 
                         border border-gray-400  rounded-md p-2  ">
                         <div class=" w-4/5   flex items-center">
-                            <n-icon size="medium" >
+                            <n-icon size="medium">
                                 <game-controller-outline />
                             </n-icon>
                             <div class=" truncate mx-2">
-                                <p v-if="!item.enable_edit"  class=" truncate h-full">{{ item.title }}</p>
-                                <n-input v-else type="text" size="small" 
-                                class=" h-full " :hidden="false" v-model:value="item.title"
-                                @keyup.enter="submit(item.uuid)" ></n-input>
+                                <p v-if="!item.enable_edit" class=" truncate h-full">{{ item.title }}</p>
+                                <n-input v-else type="text" size="small" class=" h-full " :hidden="false"
+                                    v-model:value="item.title" @keyup.enter="submit(item.uuid)"></n-input>
                             </div>
                         </div>
                         <div class="w-1/5 flex justify-center items-center">
-                            <n-button-group size="small"   :vertical="false" :hidden="false" >
+                            <n-button-group size="small" :vertical="false" :hidden="false">
                                 <n-button text size="" @click="editLeftListEle(item.uuid)">
                                     <n-icon>
                                         <Edit />
@@ -84,12 +83,12 @@ function submit(index){
                                         <Delete />
                                     </n-icon>
                                 </n-button>
-    
+
                             </n-button-group>
                         </div>
                     </div>
-                    
-                   
+
+
                 </div>
                 <!-- 设置页面 -->
                 <div class="basis-1/12 flex justify-start items-center h-full ">
@@ -112,11 +111,27 @@ function submit(index){
                             <SettingsOutline></SettingsOutline>
                         </n-icon>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
-        <div class=" col-span-10 "></div>
+        <div class=" col-span-10 ">
+            <div class="flex flex-col h-screen  bg-blue-100">
+                <div class=" basis-11/12 bg-red-50 w-full">
+                    <!-- 这里是IM区域 -->
+                </div>
+                <div class=" basis-1/12   w-full">
+                    <!-- 这里是输入框 -->
+                    <div class="  p-2">
+
+                    <n-input placeholder="自动调整尺寸" type="textarea" size="tiny" :autosize="{
+                        minRows: 3,
+                        maxRows: 5
+                    }" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
