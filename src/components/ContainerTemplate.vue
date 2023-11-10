@@ -1,8 +1,9 @@
 <script setup>
-import { NButton, NInput, NIcon, NButtonGroup } from 'naive-ui'
+import { NButton, NInput, NIcon, NButtonGroup, NSpin, NInputGroup } from 'naive-ui'
 import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
 import { Edit, Delete } from '@vicons/carbon'
+import Markdown from 'vue3-markdown-it';
 
 import { reactive, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
@@ -10,6 +11,11 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
+var setting = reactive({
+    model: 'gpt-3.5-turbo',
+    Temperatures: 0.8,
+    Top_p: 1
+})
 var input_area_value = ref('')
 var left_data = reactive({
     left_list: [
@@ -19,32 +25,19 @@ var left_data = reactive({
     chat: [
         {
             uuid: 1, msg_list: [
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                // { content: '', create_time: '2023-11-09 11:50:23', reversion: true, msgload: false },
-                // { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                // { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: 'hello1', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
             ]
         },
         {
             uuid: 2, msg_list: [
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-                { content: '', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                { content: 'xxx', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
             ]
         },
     ]
 
 })
+
+
 
 function editLeftListEle(uuid) {
     var index = left_data.left_list.findIndex(v => v.uuid == uuid)
@@ -79,7 +72,6 @@ function submit(index) {
 }
 
 function getMsgList(uuid) {
-    console.log(uuid)
     if (uuid) {
         var index = left_data.chat.findIndex(v => v.uuid == uuid)
         return left_data.chat[index].msg_list
@@ -90,20 +82,100 @@ function getMsgList(uuid) {
 }
 
 function addMessageListItem(uuid) {
-
     var index = left_data.chat.findIndex(v => v.uuid == uuid)
-    left_data.chat[index].msg_list.push({ 
+    const now_t = (new Date()).toLocaleString('sv-SE', { "timeZone": "PRC" })
+    left_data.chat[index].msg_list.push({
         content: input_area_value.value,
-        create_time: '2023-11-09 11:50:23',
-        reversion: false, 
-        msgload: false 
+        create_time: now_t,
+        reversion: true,
+        msgload: false
     })
+    input_area_value.value = ''
     var ele = document.getElementById("msgArea")
     ele.scrollTop = ele.scrollHeight + ele.offsetHeight
+    left_data.chat[index].msg_list.push({
+        content: '',
+        create_time: now_t,
+        reversion: false,
+        msgload: true
+    })
+    startStream(index)
 }
 
-function sendMsg() {
+function buildMessagePromt(index) {
+    const res = []
+    left_data.chat[index].msg_list.forEach(v => {
+        let role = v.reversion ? 'user' : 'assistant'
+        res.push({
+            role: role,
+            content: v.content
+        })
+    })
+    return res
+}
 
+async function startStream(index) {
+    const url = import.meta.env.VITE_AI_BASE_URL;
+    const key = import.meta.env.VITE_AI_KEY
+    const response = await fetch(url, {
+        "method": "POST",
+        "headers": {
+            Authorization: `Bearer ${key}`
+        },
+        "mode": "cors",
+        "body": JSON.stringify({
+            model: setting.model,
+            messages: buildMessagePromt(index),
+            temperature: setting.Temperatures,
+            top_p: setting.Top_p,
+            stream: true,
+        })
+    });
+
+    const reader = response.body.getReader();
+    let buffer = ''; // 用于缓存数据块
+
+    const readStream = async () => {
+        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+        const { done, value } = await reader.read();
+
+        if (done) {
+            console.log('Stream reading complete');
+            // left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+
+            return;
+        }
+
+        const chunk = new TextDecoder('utf-8').decode(value);
+        buffer += chunk; // 将数据块追加到缓冲区中
+
+        // 检查缓冲区中是否有完整的数据
+        let completeData = '';
+        let separatorIndex;
+        while ((separatorIndex = buffer.indexOf('\n')) !== -1) {
+            completeData = buffer.slice(0, separatorIndex); // 提取完整的数据
+            buffer = buffer.slice(separatorIndex + 1); // 更新缓冲区，去掉已处理的数据
+
+            // 解析JSON数据
+            const res = completeData.split(": ")[1]
+            let data;
+            try {
+                data = JSON.parse(res);
+                // 这里处理业务逻辑
+                const delta_content = data.choices[0].delta.content
+
+                left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += delta_content
+            } catch (e) {
+                // console.error('Error parsing JSON:', e);
+                continue
+            }
+        }
+
+        return readStream();
+    }
+
+    // 开始处理流数据
+    return readStream();
 }
 
 </script>
@@ -195,10 +267,10 @@ function sendMsg() {
                         <div class="flex  " :class="msglist.reversion ? 'flex-row-reverse' : 'flex-row'">
                             <div
                                 class=" bg-blue-200 w-auto max-w-[80%] min-w-[1%] break-words overflow-ellipsis rounded-sm p-2 my-1">
-                                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Amet magni excepturi qui quasi
-                                delectus rem earum nisi! Dicta culpa et alias eius a, repellendus rem, provident, voluptate
-                                voluptatem totam animi.
+                                <n-spin v-if="msglist.msgload" size="small" stroke="red" />
+                                <Markdown v-else :source="msglist.content" />
                             </div>
+
                         </div>
                     </div>
 
@@ -207,12 +279,18 @@ function sendMsg() {
                 <div class=" basis-1/12   w-full">
                     <!-- 这里是输入框 -->
                     <div class="  p-2">
+                        <n-input-group>
 
-                        <n-input @keyup.ctrl.enter="addMessageListItem(route.params.uuid)" placeholder="自动调整尺寸"
-                            v-model:value="input_area_value" type="textarea" size="tiny" :autosize="{
-                                minRows: 3,
-                                maxRows: 5
-                            }" />
+                            <n-input @keyup.ctrl.enter="addMessageListItem(route.params.uuid)" placeholder="自动调整尺寸"
+                                v-model:value="input_area_value" type="textarea" size="tiny" :autosize="{
+                                    minRows: 3,
+                                    maxRows: 5
+                                }" />
+                            <n-button  ghost class=" h-auto " @click="addMessageListItem(route.params.uuid)" >
+                                搜索
+                            </n-button>
+                        </n-input-group>
+
                     </div>
                 </div>
             </div>
