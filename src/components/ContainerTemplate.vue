@@ -5,6 +5,8 @@ import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
 import { Edit, Delete } from '@vicons/carbon'
 import Markdown from 'vue3-markdown-it';
 
+import Login from  './Login.vue'
+
 import { reactive, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 
@@ -181,7 +183,8 @@ async function startStream(index) {
 </script>
 
 <template>
-    <div class=" grid grid-cols-12 h-full">
+    <Login></Login>
+    <div class=" hidden grid grid-cols-12 h-full">
         <div class=" col-span-2 h-full relative">
             <div class=" flex flex-col h-screen border ">
                 <!-- 新建按钮 -->
