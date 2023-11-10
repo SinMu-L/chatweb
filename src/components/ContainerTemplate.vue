@@ -181,7 +181,7 @@ async function startStream(index) {
 </script>
 
 <template>
-    <div class=" grid grid-cols-12 h-screen">
+    <div class=" grid grid-cols-12 h-full">
         <div class=" col-span-2 h-full relative">
             <div class=" flex flex-col h-screen border ">
                 <!-- 新建按钮 -->
