@@ -10,9 +10,10 @@ import Markdown from 'vue3-markdown-it';
 
 import Login from './Login.vue'
 
-import { reactive, ref, getCurrentInstance } from 'vue';
+import { reactive, ref, getCurrentInstance, watch, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 const instaceV = getCurrentInstance()
 
@@ -58,22 +59,29 @@ var left_data = reactive({
             ]
         },
     ],
-    pwd: '123456'
 
 })
 
+// 监听响应式数据
+watch(left_data, (newValue, oldValue) => {
+    console.log('123')
+    localStorage.setItem('chatweb', JSON.stringify(newValue))
+    console.log(oldValue, newValue)
+})
+
+// 创建响应式变量后只执行一次输出的需求
+watchEffect(()=>{
+    // 读取 localstorage
+    const data = localStorage.getItem('chatweb')
+    if(data){
+
+        const history = JSON.parse(data)
+        left_data.left_list = history.left_list
+        left_data.chat = history.chat
+    }
+})
 
 
-
-function editLeftListEle(uuid) {
-    var index = left_data.left_list.findIndex(v => v.uuid == uuid)
-    left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit
-}
-
-function delLeftListEle(uuid) {
-    var index = left_data.left_list.findIndex(v => v.uuid == uuid)
-    left_data.left_list.splice(index, 1)
-}
 
 function addLeftListEle() {
     const uuid = randomUuid()
@@ -82,6 +90,45 @@ function addLeftListEle() {
         title: `New Chat${uuid}`,
         enable_edit: false
     })
+    left_data.chat.push({
+        uuid: uuid,
+        msg_list: []
+    })
+    // ls.addLeftListItem({
+    //     uuid: uuid,
+    //     title: `New Chat${uuid}`,
+    //     enable_edit: false
+    // })
+    // ls.addChatItem({
+    //     uuid: uuid,
+    //     msg_list: []
+    // })
+    // 路由跳转到最新的item
+    router.push({ name: 'chat', params: { uuid: uuid } })
+
+}
+
+function editLeftListEle(uuid) {
+    const index = left_data.left_list.findIndex(v=>v.uuid==uuid)
+    left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit 
+
+    // all_data.left_list[index].enable_edit = !all_data.left_list[index].enable_edit
+    // ls.updateLeftListItemEnableEditButton(uuid)
+
+}
+
+function delLeftListEle(uuid) {
+    var index = left_data.left_list.findIndex(v => v.uuid == uuid)
+    left_data.left_list.splice(index, 1)
+}
+
+function getMsgList(uuid){
+    if(uuid){
+        var index = left_data.chat.findIndex(v => v.uuid == uuid)
+        return left_data.chat[index].msg_list
+    }
+    return []
+    
 }
 
 function randomUuid() {
@@ -97,15 +144,6 @@ function submit(index) {
     editLeftListEle(index)
 }
 
-function getMsgList(uuid) {
-    if (uuid) {
-        var index = left_data.chat.findIndex(v => v.uuid == uuid)
-        return left_data.chat[index].msg_list
-    } else {
-        return []
-    }
-
-}
 
 function addMessageListItem(uuid) {
     var index = left_data.chat.findIndex(v => v.uuid == uuid)
@@ -213,9 +251,7 @@ function showSettingFunc() {
     console.log(123)
     showSetting.value = !showSetting.value
 }
-function test(){
-    console.log(123123,instaceV.proxy.AIBody)
-}
+
 
 </script>
 
@@ -305,28 +341,19 @@ function test(){
                                             <div class=" grid grid-rows-3 gap-4">
                                                 <div>
                                                     <span class=" mr-4">Model: </span>
-                                                    <n-select :style="{ width: '80%' }" 
-                                                    :options="selectOptions" 
-                                                    v-model:value="setting.model"
-                                                   />
+                                                    <n-select :style="{ width: '80%' }" :options="selectOptions"
+                                                        v-model:value="setting.model" />
                                                 </div>
                                                 <div>
                                                     <span class=" mr-4">Temperatures: </span>
-                                                    <n-input-number :style="{ width: '80%' }" 
-                                                    :default-value="0.8" 
-                                                    :step="0.1" 
-                                                    :max="1" 
-                                                    :min="0.1"
-                                                    v-model:value="setting.Temperatures" />
+                                                    <n-input-number :style="{ width: '80%' }" :default-value="0.8"
+                                                        :step="0.1" :max="1" :min="0.1"
+                                                        v-model:value="setting.Temperatures" />
                                                 </div>
                                                 <div>
                                                     <span class=" mr-4">Top_p: </span>
-                                                    <n-input-number :style="{ width: '80%' }" 
-                                                    :default-value="1" 
-                                                    :step="1" 
-                                                    :max="1" 
-                                                    :min="1"
-                                                    v-model:value="setting.Top_p" />
+                                                    <n-input-number :style="{ width: '80%' }" :default-value="1" :step="1"
+                                                        :max="1" :min="1" v-model:value="setting.Top_p" />
                                                 </div>
                                             </div>
                                         </n-tab-pane>
@@ -334,7 +361,7 @@ function test(){
                                             其他
                                         </n-tab-pane>
                                     </n-tabs>
-                                    
+
                                 </n-modal>
                             </div>
 
