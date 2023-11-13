@@ -123,7 +123,7 @@ function delLeftListEle(uuid) {
 }
 
 function getMsgList(uuid){
-    if(uuid){
+    if(uuid && uuid != undefined){
         var index = left_data.chat.findIndex(v => v.uuid == uuid)
         return left_data.chat[index].msg_list
     }
