@@ -1,13 +1,13 @@
 <script setup>
 import ContainerTemplate from './components/ContainerTemplate.vue'
+import { NMessageProvider } from 'naive-ui'
 
 </script>
 
 <template>
-  <ContainerTemplate></ContainerTemplate>
+  <n-message-provider>
+    <ContainerTemplate></ContainerTemplate>
+  </n-message-provider>
 </template>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>

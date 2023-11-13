@@ -1,8 +1,13 @@
 <script setup>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, ref,getCurrentInstance } from 'vue'
 import { NButton, NModal, NTabs, NTabPane, NForm, NFormItem,NFormItemRow, NInput,NCard } from 'naive-ui'
+import { useMessage } from 'naive-ui'
+
+const instanceV = getCurrentInstance()
+const message = useMessage()
 
 const showModal = ref(true)
+var login_pwd = ref('')
 
 var bodyStyle = {
     width: '600px'
@@ -13,47 +18,35 @@ var segmented = {
     footer: 'soft'
 }
 
+function login(){
+    if(login_pwd.value === instanceV.proxy.loginPwd){
+        instanceV.proxy.hasLogin = true
+        showModal.value = false
+        message.success('密码正确...')
+    }else{
+        message.error('密码错误...')
+    }
+
+}
+
 </script>
 <template>
-    <div class=" h-screen w-screen bg-gray-300">
-        <!-- <n-button @click="showModal = true">
-            来吧
-        </n-button> -->
-        <n-modal v-model:show="showModal" class="custom-card" preset="card" :style="bodyStyle" title="卡片预设" size="huge"
-            :bordered="false" :segmented="segmented" :mask-closable="false" :close-on-esc="false">
-            <!-- <template #header-extra>
-                噢!
-            </template> -->
+    <div class=" h-screen w-screen bg-gray-300" :class=" showModal ? '':'hidden'">
+        <n-modal v-model:show="showModal" class="custom-card" preset="card" :style="bodyStyle" title="" size="huge"
+            :bordered="false" :close-on-esc="false" :closable="false" :maskClosable="false">
+
             <n-card>
                 <n-tabs class="card-tabs" default-value="signin" size="large" animated pane-wrapper-style="margin: 0 -4px"
                     pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;">
                     <n-tab-pane name="signin" tab="登录">
                         <n-form>
-                            <n-form-item-row label="用户名">
-                                <n-input />
-                            </n-form-item-row>
                             <n-form-item-row label="密码">
-                                <n-input />
+                                <n-input v-model:value="login_pwd" />
                             </n-form-item-row>
                         </n-form>
-                        <n-button type="primary" block secondary strong>
+                        <n-button type="primary" block secondary strong
+                        @click="login()">
                             登录
-                        </n-button>
-                    </n-tab-pane>
-                    <n-tab-pane name="signup" tab="注册">
-                        <n-form>
-                            <n-form-item-row label="用户名">
-                                <n-input />
-                            </n-form-item-row>
-                            <n-form-item-row label="密码">
-                                <n-input />
-                            </n-form-item-row>
-                            <n-form-item-row label="重复密码">
-                                <n-input />
-                            </n-form-item-row>
-                        </n-form>
-                        <n-button type="primary" block secondary strong>
-                            注册
                         </n-button>
                     </n-tab-pane>
                 </n-tabs>

@@ -7,11 +7,11 @@ import Markdown from 'vue3-markdown-it';
 
 import Login from  './Login.vue'
 
-import { reactive, ref } from 'vue';
+import { reactive, ref, getCurrentInstance } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter()
 const route = useRoute()
+const instaceV = getCurrentInstance()
 
 var setting = reactive({
     model: 'gpt-3.5-turbo',
@@ -35,7 +35,8 @@ var left_data = reactive({
                 { content: 'xxx', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
             ]
         },
-    ]
+    ],
+    pwd: '123456'
 
 })
 
@@ -180,11 +181,16 @@ async function startStream(index) {
     return readStream();
 }
 
+function hasLogin(compomentName='Login'){
+    if(compomentName == 'login') return instaceV.proxy.hasLogin ? 'hidden': '';
+    if(compomentName == 'main') return instaceV.proxy.hasLogin ? '': 'hidden';
+}
+
 </script>
 
 <template>
-    <Login></Login>
-    <div class=" hidden grid grid-cols-12 h-full">
+    <Login class=" border border-red-400"></Login>
+    <div class=" grid grid-cols-12 h-full " :class="hasLogin('main')" >
         <div class=" col-span-2 h-full relative">
             <div class=" flex flex-col h-screen border ">
                 <!-- 新建按钮 -->
