@@ -11,5 +11,10 @@ app.use(router)
 app.use(Markdown)
 app.config.globalProperties.loginPwd = '123456'
 app.config.globalProperties.hasLogin = true
+app.config.globalProperties.AIBody = {
+    model: 'gpt-3.5-turbo',
+    Temperatures: 0.8,
+    Top_p: 1
+}
 app.mount('#app')
 

@@ -6,17 +6,14 @@ import { useMessage } from 'naive-ui'
 const instanceV = getCurrentInstance()
 const message = useMessage()
 
-const showModal = ref(true)
+const showModal = ref(false)
 var login_pwd = ref('')
 
 var bodyStyle = {
     width: '600px'
 }
 
-var segmented = {
-    content: 'soft',
-    footer: 'soft'
-}
+
 
 function login(){
     if(login_pwd.value === instanceV.proxy.loginPwd){
@@ -36,7 +33,7 @@ function login(){
             :bordered="false" :close-on-esc="false" :closable="false" :maskClosable="false">
 
             <n-card>
-                <n-tabs class="card-tabs" default-value="signin" size="large" animated pane-wrapper-style="margin: 0 -4px"
+                <n-tabs class="card-tabs" transform-origin="center" default-value="signin" size="large" animated pane-wrapper-style="margin: 0 -4px"
                     pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;">
                     <n-tab-pane name="signin" tab="登录">
                         <n-form>

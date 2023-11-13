@@ -1,11 +1,14 @@
 <script setup>
-import { NButton, NInput, NIcon, NButtonGroup, NSpin, NInputGroup } from 'naive-ui'
+import {
+    NButton, NInput, NIcon, NButtonGroup, NSpin,
+    NInputGroup, NCard, NModal, NTabs, NTabPane, NInputNumber, NSelect
+} from 'naive-ui'
 import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
 import { Edit, Delete } from '@vicons/carbon'
 import Markdown from 'vue3-markdown-it';
 
-import Login from  './Login.vue'
+import Login from './Login.vue'
 
 import { reactive, ref, getCurrentInstance } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
@@ -13,11 +16,30 @@ import { useRouter, useRoute } from 'vue-router'
 const route = useRoute()
 const instaceV = getCurrentInstance()
 
+
+const showSetting = ref(false)
 var setting = reactive({
     model: 'gpt-3.5-turbo',
     Temperatures: 0.8,
-    Top_p: 1
+    Top_p: 1,
 })
+
+var segmented = {
+    content: 'soft',
+    footer: 'soft'
+}
+
+var selectOptions = ref([
+    {
+        label: 'gpt-3.5-turbo',
+        value: 'gpt-3.5-turbo'
+    },
+    {
+        label: 'gpt-4',
+        value: 'gpt-4'
+    }
+])
+
 var input_area_value = ref('')
 var left_data = reactive({
     left_list: [
@@ -39,6 +61,7 @@ var left_data = reactive({
     pwd: '123456'
 
 })
+
 
 
 
@@ -181,17 +204,25 @@ async function startStream(index) {
     return readStream();
 }
 
-function hasLogin(compomentName='Login'){
-    if(compomentName == 'login') return instaceV.proxy.hasLogin ? 'hidden': '';
-    if(compomentName == 'main') return instaceV.proxy.hasLogin ? '': 'hidden';
+function hasLogin(compomentName = 'Login') {
+    if (compomentName == 'login') return instaceV.proxy.hasLogin ? 'hidden' : '';
+    if (compomentName == 'main') return instaceV.proxy.hasLogin ? '' : 'hidden';
+}
+
+function showSettingFunc() {
+    console.log(123)
+    showSetting.value = !showSetting.value
+}
+function test(){
+    console.log(123123,instaceV.proxy.AIBody)
 }
 
 </script>
 
 <template>
     <Login class=" border border-red-400"></Login>
-    <div class=" grid grid-cols-12 h-full " :class="hasLogin('main')" >
-        <div class=" col-span-2 h-full relative">
+    <div class=" grid grid-cols-12 h-full " :class="hasLogin('main')">
+        <div class=" col-span-2 h-full ">
             <div class=" flex flex-col h-screen border ">
                 <!-- 新建按钮 -->
                 <div class=" basis-1/12   flex justify-center items-center">
@@ -254,9 +285,60 @@ function hasLogin(compomentName='Login'){
                     </div>
                     <!-- 设置 -->
                     <div class=" w-1/4  h-full flex justify-center items-center">
-                        <n-icon>
+                        <n-icon @click="showSettingFunc()">
                             <SettingsOutline></SettingsOutline>
                         </n-icon>
+                        <!-- 设置 modal -->
+                        <div class="hidden absolute top-0 left-0 bg-transparent  w-screen h-screen border border-red-200">
+                            <div class=" flex justify-center items-center">
+                                <n-modal v-model:show="showSetting" style="width: 600px" class="custom-card" preset="card"
+                                    title="" size="huge">
+
+                                    <template #header-extra>
+                                    </template>
+                                    <n-tabs type="line" animated>
+                                        <n-tab-pane name="about" tab="关于">
+                                            <div>这是一个demo项目，仅用于学习。</div>
+                                            <div class="my-4">技术栈：Vue3 + Vite + tailwindCss3 + NaiveUi</div>
+                                        </n-tab-pane>
+                                        <n-tab-pane name="settings" tab="设置">
+                                            <div class=" grid grid-rows-3 gap-4">
+                                                <div>
+                                                    <span class=" mr-4">Model: </span>
+                                                    <n-select :style="{ width: '80%' }" 
+                                                    :options="selectOptions" 
+                                                    v-model:value="setting.model"
+                                                   />
+                                                </div>
+                                                <div>
+                                                    <span class=" mr-4">Temperatures: </span>
+                                                    <n-input-number :style="{ width: '80%' }" 
+                                                    :default-value="0.8" 
+                                                    :step="0.1" 
+                                                    :max="1" 
+                                                    :min="0.1"
+                                                    v-model:value="setting.Temperatures" />
+                                                </div>
+                                                <div>
+                                                    <span class=" mr-4">Top_p: </span>
+                                                    <n-input-number :style="{ width: '80%' }" 
+                                                    :default-value="1" 
+                                                    :step="1" 
+                                                    :max="1" 
+                                                    :min="1"
+                                                    v-model:value="setting.Top_p" />
+                                                </div>
+                                            </div>
+                                        </n-tab-pane>
+                                        <n-tab-pane name="other" tab="其他">
+                                            其他
+                                        </n-tab-pane>
+                                    </n-tabs>
+                                    
+                                </n-modal>
+                            </div>
+
+                        </div>
                     </div>
 
                 </div>
@@ -295,8 +377,8 @@ function hasLogin(compomentName='Login'){
                                     minRows: 3,
                                     maxRows: 5
                                 }" />
-                            <n-button  ghost class=" h-auto " @click="addMessageListItem(route.params.uuid)" >
-                                搜索
+                            <n-button ghost class=" h-auto " @click="addMessageListItem(route.params.uuid)">
+                                发送
                             </n-button>
                         </n-input-group>
 
