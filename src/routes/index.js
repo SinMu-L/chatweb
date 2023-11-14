@@ -48,6 +48,9 @@ router.beforeEach((to, from, next) => {
             }else{
                 router.push({name: 'chat', params:{uuid: getFirstRoute()}})
             }
+        }else if(to.name == 'root'){
+
+            router.push({name: 'chat', params:{uuid: getFirstRoute()}})
         }else{
             // 不是chat就继续
             next();
