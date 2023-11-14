@@ -14,8 +14,8 @@ import Login from './Login.vue'
 
 import { reactive, ref, getCurrentInstance, watch, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
-import domtoimage from 'dom-to-image'
-import { saveAs } from 'file-saver';
+import html2canvas from "html2canvas";
+
 
 const router = useRouter()
 const route = useRoute()
@@ -271,12 +271,14 @@ function deleteChatItemHistory(uuid) {
 
 // 当前会话下载为图片
 function dom2img() {
-    domtoimage.toBlob(document.getElementById('msgArea'))
-        .then(function (blob) {
-            const t = (new Date()).getTime()
-            saveAs(blob, `chatweb-${t}.png`);
-            
-        });
+    html2canvas(document.querySelector("#msgArea")).then((canvas) => {
+        var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        var link = document.getElementById("link");
+        link.setAttribute("download", `chatweb-${(new Date()).getTime()}.png`);
+        link.setAttribute("href", image);
+        link.click();
+      });
+
 }
 
 
@@ -446,6 +448,7 @@ function dom2img() {
                                 </template>
                                 下载当前会话为图片
                             </n-tooltip>
+                            <a href="" id="link" class="hidden"></a>
 
 
                             <n-input show-count @keyup.ctrl.enter="addMessageListItem(route.params.uuid)"
