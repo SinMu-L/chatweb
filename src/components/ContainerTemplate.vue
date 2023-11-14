@@ -1,21 +1,26 @@
 <script setup>
 import {
     NButton, NInput, NIcon, NButtonGroup, NSpin,
-    NInputGroup, NCard, NModal, NTabs, NTabPane, NInputNumber, NSelect
+    NInputGroup, NCard, NModal, NTabs, NTabPane, NInputNumber, NSelect,
+    NTooltip,
+    useMessage,
 } from 'naive-ui'
 import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
-import { Edit, Delete } from '@vicons/carbon'
+import { Edit, Delete, Download } from '@vicons/carbon'
 import Markdown from 'vue3-markdown-it';
 
 import Login from './Login.vue'
 
 import { reactive, ref, getCurrentInstance, watch, watchEffect } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
+import domtoimage from 'dom-to-image'
+import { saveAs } from 'file-saver';
 
 const router = useRouter()
 const route = useRoute()
 const instaceV = getCurrentInstance()
+const message = useMessage()
 
 
 const showSetting = ref(false)
@@ -64,16 +69,14 @@ var left_data = reactive({
 
 // 监听响应式数据
 watch(left_data, (newValue, oldValue) => {
-    console.log('123')
     localStorage.setItem('chatweb', JSON.stringify(newValue))
-    console.log(oldValue, newValue)
 })
 
 // 创建响应式变量后只执行一次输出的需求
-watchEffect(()=>{
+watchEffect(() => {
     // 读取 localstorage
     const data = localStorage.getItem('chatweb')
-    if(data){
+    if (data) {
 
         const history = JSON.parse(data)
         left_data.left_list = history.left_list
@@ -82,7 +85,7 @@ watchEffect(()=>{
 })
 
 
-
+// 添加侧壁栏item
 function addLeftListEle() {
     const uuid = randomUuid()
     left_data.left_list.push({
@@ -107,28 +110,30 @@ function addLeftListEle() {
     router.push({ name: 'chat', params: { uuid: uuid } })
 
 }
-
+// 点击侧边栏某个item的编辑按钮
 function editLeftListEle(uuid) {
-    const index = left_data.left_list.findIndex(v=>v.uuid==uuid)
-    left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit 
+    const index = left_data.left_list.findIndex(v => v.uuid == uuid)
+    left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit
 
     // all_data.left_list[index].enable_edit = !all_data.left_list[index].enable_edit
     // ls.updateLeftListItemEnableEditButton(uuid)
 
 }
 
+// 点击侧边栏某个item的删除按钮
 function delLeftListEle(uuid) {
     var index = left_data.left_list.findIndex(v => v.uuid == uuid)
     left_data.left_list.splice(index, 1)
 }
 
-function getMsgList(uuid){
-    if(uuid && uuid != undefined){
+// 获取每个 chat 的msg list
+function getMsgList(uuid) {
+    if (uuid && uuid != undefined) {
         var index = left_data.chat.findIndex(v => v.uuid == uuid)
         return left_data.chat[index].msg_list
     }
     return []
-    
+
 }
 
 function randomUuid() {
@@ -140,12 +145,17 @@ function randomUuid() {
     return Number(uuid, 10)
 }
 
+// 监听侧边栏item的回车事件
 function submit(index) {
     editLeftListEle(index)
 }
 
 
 function addMessageListItem(uuid) {
+    if (input_area_value.value.length <= 6) {
+        message.info('内容长度不得小于6')
+        return false
+    }
     var index = left_data.chat.findIndex(v => v.uuid == uuid)
     const now_t = (new Date()).toLocaleString('sv-SE', { "timeZone": "PRC" })
     left_data.chat[index].msg_list.push({
@@ -250,6 +260,23 @@ function hasLogin(compomentName = 'Login') {
 function showSettingFunc() {
     console.log(123)
     showSetting.value = !showSetting.value
+}
+
+// 删除当前会话记录
+function deleteChatItemHistory(uuid) {
+    const index = left_data.chat.findIndex(v => v.uuid == uuid);
+    left_data.chat[index].msg_list = []
+    message.success('当前会话记录已清理')
+}
+
+// 当前会话下载为图片
+function dom2img() {
+    domtoimage.toBlob(document.getElementById('msgArea'))
+        .then(function (blob) {
+            const t = (new Date()).getTime()
+            saveAs(blob, `chatweb-${t}.png`);
+            
+        });
 }
 
 
@@ -398,10 +425,32 @@ function showSettingFunc() {
                     <!-- 这里是输入框 -->
                     <div class="  p-2">
                         <n-input-group>
+                            <n-tooltip trigger="hover">
+                                <template #trigger>
+                                    <n-button text size="large" class="px-2"
+                                        @click="deleteChatItemHistory(route.params.uuid)">
+                                        <n-icon>
+                                            <Delete></Delete>
+                                        </n-icon>
+                                    </n-button>
+                                </template>
+                                删除当前会话记录
+                            </n-tooltip>
+                            <n-tooltip trigger="hover">
+                                <template #trigger>
+                                    <n-button text size="large" class=" pr-4" @click="dom2img()">
+                                        <n-icon>
+                                            <Download></Download>
+                                        </n-icon>
+                                    </n-button>
+                                </template>
+                                下载当前会话为图片
+                            </n-tooltip>
 
-                            <n-input @keyup.ctrl.enter="addMessageListItem(route.params.uuid)" placeholder="自动调整尺寸"
-                                v-model:value="input_area_value" type="textarea" size="tiny" :autosize="{
-                                    minRows: 3,
+
+                            <n-input show-count @keyup.ctrl.enter="addMessageListItem(route.params.uuid)"
+                                placeholder="自动调整尺寸" v-model:value="input_area_value" type="textarea" size="tiny" :autosize="{
+                                    minRows: 2,
                                     maxRows: 5
                                 }" />
                             <n-button ghost class=" h-auto " @click="addMessageListItem(route.params.uuid)">
@@ -420,5 +469,6 @@ function showSettingFunc() {
 <style scoped>
 .router-link-active {
     border-color: #18a058;
+    color: #18a058;
 }
 </style>
