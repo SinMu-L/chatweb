@@ -326,11 +326,12 @@ async function dom2img() {
     </div>
     <Login class=" border border-red-400"></Login>
     <div class=" flex flex-row h-full " :class="hasLogin('main')">
+        <!-- 非移动端模式下侧边栏的样式 -->
         <div class=" sm:w-1/5 h-full  " :class="controlSidebarHidden ? 'w-0' : ''">
             <div class="hidden sm:flex sm:flex-col sm:h-screen sm:border ">
                 <!-- 新建按钮 -->
                 <div class=" basis-1/12   flex justify-center items-center">
-                    <n-button class="w-4/5" @click="addLeftListEle">New Chat</n-button>
+                    <n-button class="w-4/5 dark:text-white" @click="addLeftListEle">New Chat</n-button>
                 </div>
                 <!-- 列表 -->
 
@@ -339,7 +340,7 @@ async function dom2img() {
                     <div v-for=" item in left_data.left_list" :key="item.uuid">
                         <!-- 侧边栏输入框 -->
                         <router-link :to="`/chat/${item.uuid}`" class="m-2 flex flex-row justify-between items-center 
-                        border border-gray-400  rounded-md p-2  ">
+                        border border-gray-400  rounded-md p-2  dark:text-white">
 
                             <div class=" w-4/5 flex items-center">
                                 <n-icon size="medium">
@@ -439,20 +440,20 @@ async function dom2img() {
                 </div>
             </div>
         </div>
-        <!-- 移动端模式下的样式 -->
+        <!-- 移动端模式下侧边栏的样式 -->
         <div class=" sm:hidden absolute top-1 left-1 z-50 h-full w-full flex flex-col">
             <div  >
-                <n-button text style="font-size:32px"  @click="controlSidebarHidden=!controlSidebarHidden" >
-                    <n-icon class=" text-black dark:white">
+                <n-button text style="font-size:32px"  key=""  @click="controlSidebarHidden=!controlSidebarHidden" >
+                    <n-icon class=" text-black dark:text-white">
                         <Menu></Menu>
                     </n-icon>
                 </n-button>
             </div>
-            <div v-if="!controlSidebarHidden" class=" w-3/5 sm:hidden bg-white">
+            <div v-if="!controlSidebarHidden" class=" w-4/5 sm:hidden bg-white dark:bg-black">
                 <div class=" w-full flex  flex-col  h-screen border ">
                     <!-- 新建按钮 -->
-                    <div class=" basis-1/12   flex justify-center items-center">
-                        <n-button class="w-4/5" @click="addLeftListEle">New Chat</n-button>
+                    <div class=" basis-1/12   flex justify-center items-center  ">
+                        <n-button class="w-4/5 dark:text-white" @click="addLeftListEle">New Chat</n-button>
                     </div>
                     <!-- 列表 -->
 
@@ -461,9 +462,9 @@ async function dom2img() {
                         <div v-for=" item in left_data.left_list" :key="item.uuid">
                             <!-- 侧边栏输入框 -->
                             <router-link :to="`/chat/${item.uuid}`" class="m-2 flex flex-row justify-between items-center 
-                        border border-gray-400  rounded-md p-2  ">
+                        border border-gray-400  rounded-md p-2  dark:text-white ">
 
-                                <div class=" w-4/5 flex items-center">
+                                <div class=" w-4/5 flex items-center ">
                                     <n-icon size="medium">
                                         <game-controller-outline />
                                     </n-icon>
@@ -569,7 +570,7 @@ async function dom2img() {
                 <!-- 这里是IM区域 -->
                 <div class=" basis-11/12 w-full p-12 overflow-auto" id="msgArea">
                     <div v-for="(msglist, index) in getMsgList(route.params.uuid)" :key="index"
-                        class=" flex flex-col mt-1  msgItem">
+                        class=" flex flex-col mt-1  msgItem ">
                         <div :class="msglist.reversion ? 'flex-row-reverse' : 'flex-row'"
                             class=" flex justify-start items-center h-10">
                             <img class=" rounded-full h-10 w-10" src="../assets/icon.jpg" alt="">
@@ -577,7 +578,7 @@ async function dom2img() {
                         </div>
                         <div class="flex  " :class="msglist.reversion ? 'flex-row-reverse' : 'flex-row'">
                             <div
-                                class=" bg-blue-200 w-auto max-w-[80%] min-w-[1%] break-words overflow-ellipsis rounded-sm p-2 my-1">
+                                class="bg-blue-200 dark:bg-white dark:text-black w-auto max-w-[80%] min-w-[1%] break-words overflow-ellipsis rounded-sm p-2 my-1">
                                 <n-spin v-if="msglist.msgload" size="small" stroke="red" />
                                 <Markdown v-else :source="msglist.content"></Markdown>
                             </div>
@@ -595,7 +596,7 @@ async function dom2img() {
                                 <template #trigger>
                                     <n-button text size="large" class="px-2"
                                         @click="deleteChatItemHistory(route.params.uuid)">
-                                        <n-icon>
+                                        <n-icon class=" text-black dark:text-white">
                                             <Delete></Delete>
                                         </n-icon>
                                     </n-button>
@@ -605,7 +606,7 @@ async function dom2img() {
                             <n-tooltip trigger="hover">
                                 <template #trigger>
                                     <n-button text size="large" class=" pr-4" @click="dom2img()">
-                                        <n-icon>
+                                        <n-icon class=" text-black dark:text-white">
                                             <Download></Download>
                                         </n-icon>
                                     </n-button>
@@ -620,7 +621,7 @@ async function dom2img() {
                                     minRows: 2,
                                     maxRows: 5
                                 }" />
-                            <n-button ghost class=" h-auto " @click="addMessageListItem(route.params.uuid)">
+                            <n-button ghost class=" h-auto dark:text-white " @click="addMessageListItem(route.params.uuid)">
                                 发送
                             </n-button>
                         </n-input-group>
