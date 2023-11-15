@@ -3,7 +3,7 @@ import {
     NButton, NInput, NIcon, NButtonGroup, NSpin,
     NInputGroup, NCard, NModal, NTabs, NTabPane, NInputNumber, NSelect,
     NTooltip,
-    useMessage,
+    useMessage
 } from 'naive-ui'
 import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import { LogInOutline as LogInIcon, SettingsOutline } from '@vicons/ionicons5'
@@ -45,6 +45,8 @@ var selectOptions = ref([
         value: 'gpt-4'
     }
 ])
+
+var centerLodding = ref(false)
 
 var input_area_value = ref('')
 var left_data = reactive({
@@ -97,15 +99,7 @@ function addLeftListEle() {
         uuid: uuid,
         msg_list: []
     })
-    // ls.addLeftListItem({
-    //     uuid: uuid,
-    //     title: `New Chat${uuid}`,
-    //     enable_edit: false
-    // })
-    // ls.addChatItem({
-    //     uuid: uuid,
-    //     msg_list: []
-    // })
+
     // 路由跳转到最新的item
     router.push({ name: 'chat', params: { uuid: uuid } })
 
@@ -205,18 +199,21 @@ async function startStream(index) {
             stream: true,
         })
     });
+    left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+    if (response.status !== 200) {
+        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
+        return false
+    }
 
     const reader = response.body.getReader();
     let buffer = ''; // 用于缓存数据块
 
     const readStream = async () => {
-        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+
         const { done, value } = await reader.read();
 
         if (done) {
             console.log('Stream reading complete');
-            // left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
-
             return;
         }
 
@@ -237,6 +234,7 @@ async function startStream(index) {
                 data = JSON.parse(res);
                 // 这里处理业务逻辑
                 const delta_content = data.choices[0].delta.content
+                console.log(delta_content)
 
                 left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += delta_content
             } catch (e) {
@@ -270,21 +268,59 @@ function deleteChatItemHistory(uuid) {
 }
 
 // 当前会话下载为图片
-function dom2img() {
-    html2canvas(document.querySelector("#msgArea")).then((canvas) => {
-        var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-        var link = document.getElementById("link");
-        link.setAttribute("download", `chatweb-${(new Date()).getTime()}.png`);
-        link.setAttribute("href", image);
-        link.click();
-      });
+// 当前会话下载为图片
+async function dom2img() {
+    centerLodding.value = true
+
+    var ele = document.querySelectorAll(".msgItem")
+    var msgAreaDom = document.getElementById("msgArea")
+
+    const width = msgAreaDom.offsetWidth * 2
+    const height = msgAreaDom.scrollHeight * 1.5
+
+    
+    let canvas1 = document.createElement('canvas');
+    let context = canvas1.getContext('2d');
+    canvas1.width = width;
+    canvas1.height = height;
+    // 绘制矩形添加白色背景色
+    context.rect(0, 0, width, height);
+    context.fillStyle = "#fff";
+    context.fill();
+
+    let beforeHeight = 0
+    for (let i = 0; i < ele.length; i++) {
+        const dom_canvas = await html2canvas(ele[i], {
+            scrollX: 0,
+            scrollY: 0,
+            height: ele[i].scrollHeight,
+            width: ele[i].scrollWidth,
+        })
+        
+        // var image = dom_canvas.toDataURL("image/png");
+        context.drawImage(dom_canvas,0,beforeHeight,dom_canvas.width, dom_canvas.height)
+        beforeHeight = beforeHeight + dom_canvas.height;
+        
+    }
+    var image = canvas1.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    var link = document.getElementById("link");
+    link.setAttribute("download", `chatweb-${(new Date()).getTime()}.png`);
+    link.setAttribute("href", image);
+    link.click();
+
+    centerLodding.value = false
+    message.success('图片下载完成')
 
 }
+
 
 
 </script>
 
 <template>
+    <div v-if="centerLodding"  class=" absolute top-1/3 left-1/3 bg-gray w-1/3 h1/3 flex justify-center items-center ">
+        <n-spin size="large" />
+    </div>
     <Login class=" border border-red-400"></Login>
     <div class=" grid grid-cols-12 h-full " :class="hasLogin('main')">
         <div class=" col-span-2 h-full ">
@@ -405,7 +441,7 @@ function dom2img() {
                 <!-- 这里是IM区域 -->
                 <div class=" basis-11/12 w-full p-12 overflow-auto" id="msgArea">
                     <div v-for="(msglist, index) in getMsgList(route.params.uuid)" :key="index"
-                        class=" flex flex-col mt-1  ">
+                        class=" flex flex-col mt-1  msgItem">
                         <div :class="msglist.reversion ? 'flex-row-reverse' : 'flex-row'"
                             class=" flex justify-start items-center h-10">
                             <img class=" rounded-full h-10 w-10" src="../assets/icon.jpg" alt="">
@@ -415,7 +451,7 @@ function dom2img() {
                             <div
                                 class=" bg-blue-200 w-auto max-w-[80%] min-w-[1%] break-words overflow-ellipsis rounded-sm p-2 my-1">
                                 <n-spin v-if="msglist.msgload" size="small" stroke="red" />
-                                <Markdown v-else :source="msglist.content" />
+                                <Markdown v-else :source="msglist.content"></Markdown>
                             </div>
 
                         </div>

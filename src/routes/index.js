@@ -24,11 +24,17 @@ function hasRoute(uuid){
         }
         return false
     }
-    const index = data.left_list.findIndex(v=>v.uuid == uuid)
-    if(index > -1){
-        return true
+    if(data !== null){
+
+        const index = data.left_list.findIndex(v=>v.uuid == uuid)
+        if(index > -1){
+            return true
+        }
+        return false
+    }else{
+        return 1
     }
-    return false
+    
 }
 
 // to: 即将要进入的目标 用一种标准化的方式
