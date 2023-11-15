@@ -144,7 +144,7 @@ function submit(index) {
     editLeftListEle(index)
 }
 
-
+// 发送消息
 function addMessageListItem(uuid) {
     if (input_area_value.value.length <= 6) {
         message.info('内容长度不得小于6')
@@ -197,7 +197,8 @@ async function startStream(index) {
             temperature: setting.Temperatures,
             top_p: setting.Top_p,
             stream: true,
-        })
+        }),
+        "timeout": 1000,
     });
     left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
     if (response.status !== 200) {
@@ -268,7 +269,6 @@ function deleteChatItemHistory(uuid) {
 }
 
 // 当前会话下载为图片
-// 当前会话下载为图片
 async function dom2img() {
     centerLodding.value = true
 
@@ -278,7 +278,7 @@ async function dom2img() {
     const width = msgAreaDom.offsetWidth * 2
     const height = msgAreaDom.scrollHeight * 1.5
 
-    
+
     let canvas1 = document.createElement('canvas');
     let context = canvas1.getContext('2d');
     canvas1.width = width;
@@ -296,11 +296,11 @@ async function dom2img() {
             height: ele[i].scrollHeight,
             width: ele[i].scrollWidth,
         })
-        
+
         // var image = dom_canvas.toDataURL("image/png");
-        context.drawImage(dom_canvas,0,beforeHeight,dom_canvas.width, dom_canvas.height)
+        context.drawImage(dom_canvas, 0, beforeHeight, dom_canvas.width, dom_canvas.height)
         beforeHeight = beforeHeight + dom_canvas.height;
-        
+
     }
     var image = canvas1.toDataURL("image/png").replace("image/png", "image/octet-stream");
     var link = document.getElementById("link");
@@ -318,7 +318,7 @@ async function dom2img() {
 </script>
 
 <template>
-    <div v-if="centerLodding"  class=" absolute top-1/3 left-1/3 bg-gray w-1/3 h1/3 flex justify-center items-center ">
+    <div v-if="centerLodding" class=" absolute top-1/3 left-1/3 bg-gray w-1/3 h1/3 flex justify-center items-center ">
         <n-spin size="large" />
     </div>
     <Login class=" border border-red-400"></Login>
