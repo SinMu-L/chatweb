@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - naiveui_refactor
+      - response_design
 jobs:
   repo-sync:
     runs-on: ubuntu-latest
