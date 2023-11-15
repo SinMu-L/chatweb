@@ -442,8 +442,8 @@ async function dom2img() {
         <!-- 移动端模式下的样式 -->
         <div class=" sm:hidden absolute top-1 left-1 z-50 h-full w-full flex flex-col">
             <div  >
-                <n-button text size="large" color="black" @click="controlSidebarHidden=!controlSidebarHidden" >
-                    <n-icon>
+                <n-button text style="font-size:32px"  @click="controlSidebarHidden=!controlSidebarHidden" >
+                    <n-icon class=" text-black dark:white">
                         <Menu></Menu>
                     </n-icon>
                 </n-button>
