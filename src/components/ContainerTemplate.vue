@@ -326,7 +326,7 @@ async function dom2img() {
     </div>
     <Login class=" border border-red-400"></Login>
     <div class=" flex flex-row h-full " :class="hasLogin('main')">
-        <div class=" sm:w-1/5 h-full bg-red-400 " :class="controlSidebarHidden ? 'w-0' : ''">
+        <div class=" sm:w-1/5 h-full  " :class="controlSidebarHidden ? 'w-0' : ''">
             <div class="hidden sm:flex sm:flex-col sm:h-screen sm:border ">
                 <!-- 新建按钮 -->
                 <div class=" basis-1/12   flex justify-center items-center">
@@ -564,7 +564,7 @@ async function dom2img() {
             </div>
         </div>
 
-        <div class="w-full  sm:w-4/5 h-full bg-blue-400 ">
+        <div class="w-full  sm:w-4/5 h-full ">
             <div class="flex flex-col h-screen">
                 <!-- 这里是IM区域 -->
                 <div class=" basis-11/12 w-full p-12 overflow-auto" id="msgArea">
