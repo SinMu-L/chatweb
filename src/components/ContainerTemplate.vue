@@ -325,7 +325,7 @@ async function dom2img() {
         <n-spin size="large" />
     </div>
     <Login class=" border border-red-400"></Login>
-    <div class=" flex flex-row h-full " :class="hasLogin('main')">
+    <div class=" flex flex-row h-min " :class="hasLogin('main')">
         <!-- 非移动端模式下侧边栏的样式 -->
         <div class=" sm:w-1/5 h-full  " :class="controlSidebarHidden ? 'w-0' : ''">
             <div class="hidden sm:flex sm:flex-col sm:h-screen sm:border ">
