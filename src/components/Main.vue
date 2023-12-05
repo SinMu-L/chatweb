@@ -1,9 +1,11 @@
 <script setup>
-import { NSpin, NInput, NButton, NInputGroup } from 'naive-ui'
+import { NSpin, NInput, NButton, NInputGroup, NIcon } from 'naive-ui'
 import { useChatlistStore } from '../stores/chatlist'
 import { useMessage } from 'naive-ui'
 import { useRouter, useRoute } from 'vue-router'
-import { nextTick, ref } from 'vue'
+import { nextTick, onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import { SendAlt, Delete, Download } from '@vicons/carbon'
+import html2canvas from 'html2canvas'
 
 // 存储编辑的内容
 var content = ref("")
@@ -11,6 +13,25 @@ const chatlist = useChatlistStore()
 const route = useRoute()
 const router = useRouter()
 const message = useMessage()
+
+let messageReactive
+const removeMessage = async () => {
+    console.log("remove message")
+    if (messageReactive) {
+        messageReactive.destroy()
+        messageReactive = null
+    }
+}
+
+
+onBeforeUnmount(removeMessage)
+
+async function createMessage() {
+    if (!messageReactive) {
+        console.log("create message")
+        messageReactive = message.loading("正在下载", { duration: 0 })
+    }
+}
 
 function is_chat() {
     return route.name == 'chat'
@@ -34,6 +55,10 @@ function send_msg() {
         message.error('uuid获取失败')
         return false
     }
+    if (content.value.length <= 0) {
+        message.info('不能发送空白消息')
+        return false
+    }
     chatlist.addMessageListItem(uuid, `${content.value}`, true)
     // 对接AI
     chatlist.addMessageListItem(uuid, content.value, false)
@@ -49,13 +74,64 @@ function send_msg() {
     })
 
 }
+
+// 当前会话下载为图片
+async function dom2img() {
+    await createMessage()
+
+    var ele = document.querySelectorAll(".msgItem")
+    var msgAreaDom = document.getElementById("msglist")
+
+    const width = msgAreaDom.offsetWidth * 2
+    const height = msgAreaDom.scrollHeight * 1.5
+
+
+    let canvas1 = document.createElement('canvas');
+    let context = canvas1.getContext('2d');
+    canvas1.width = width;
+    canvas1.height = height;
+    // 绘制矩形添加白色背景色
+    context.rect(0, 0, width, height);
+    context.fillStyle = "#fff";
+    context.fill();
+
+    let beforeHeight = 0
+    for (let i = 0; i < ele.length; i++) {
+        const dom_canvas = await html2canvas(ele[i], {
+            scrollX: 0,
+            scrollY: 0,
+            height: ele[i].scrollHeight,
+            width: ele[i].scrollWidth,
+        })
+
+        // var image = dom_canvas.toDataURL("image/png");
+        context.drawImage(dom_canvas, 0, beforeHeight, dom_canvas.width, dom_canvas.height)
+        beforeHeight = beforeHeight + dom_canvas.height;
+
+    }
+    var image = canvas1.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    var link = document.getElementById("link");
+    link.setAttribute("download", `chatweb-${(new Date()).getTime()}.png`);
+    link.setAttribute("href", image);
+    link.click();
+
+    await removeMessage()
+
+    message.success('图片下载完成')
+
+}
+
+function deleteMsgList(){
+    chatlist.deleteMessageList(route.params.uuid)
+}
+
 </script>
 
 <template>
     <div v-if="is_chat()" class="flex flex-col h-full ">
         <!-- 消息框 -->
         <div id="msglist" class="overflow-auto basis-11/12  p-4 flex flex-col  ">
-            <div v-for="(msg, index) in getMessageList()" :key="index" class=" flex flex-col mt-8  msgItem px-4">
+            <div v-for="(msg, index) in getMessageList()" :key="index" class=" flex flex-col mt-8  msgItem px-4 msgItem ">
 
                 <div :class="msg.reversion ? 'flex-row-reverse' : 'flex-row'" class=" flex justify-start items-center h-10">
                     <img class=" rounded-full h-10 w-10" src="/avatar.jpg" alt="">
@@ -73,18 +149,23 @@ function send_msg() {
             </div>
         </div>
 
+        <a href="" id="link" class="hidden"></a>
         <!-- 底部输入框 -->
-        <div class=" basis-1/12  px-4 bg-red-100 ">
-            <n-input-group class=" w-full  ">
-                <n-input :style="{ width: '100%' }" />
-                <n-button type="primary" ghost  @click="send_msg">
-                    搜索
-                </n-button>
-                <!-- <n-input v-model:value="content" placeholder="自动调整尺寸" />
-                <n-button type="primary" ghost class="h-4" @click="send_msg">
-                    搜索
-                </n-button> -->
-            </n-input-group>
+        <div class=" basis-1/12  px-12  flex flex-row">
+            <div class=" basis-1/12   flex flex-row justify-around items-center px-4">
+                <n-icon :component="Delete" size="18" :depth="1" @click="deleteMsgList()" />
+                <n-icon :component="Download" size="18" class=" " :depth="1" @click="dom2img()" />
+            </div>
+            <div class=" basis-11/12 flex flex-row justify-center items-center">
+                <n-input-group class=" w-full  ">
+                    <n-input v-model:value="content" :style="{ width: '100%' }" type="textarea" :autosize="{
+                        minRows: 1
+                    }" />
+                    <n-button type="primary" ghost @click="send_msg">
+                        <n-icon :component="SendAlt" size="18" :depth="1" />
+                    </n-button>
+                </n-input-group>
+            </div>
         </div>
     </div>
     <div v-else class="flex flex-col h-full items-center ">

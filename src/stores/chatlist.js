@@ -99,7 +99,20 @@ export const useChatlistStore = defineStore('chatlist', {
         })
         return true
       }
-    }
+    },
+    deleteMessageList(uuid){
+      if(uuid == undefined){
+        return false
+      }
+      const index = this.message_list.findIndex(v=>v.uuid == uuid)
+      if(index < 0){
+        throw new Error('获取消息列表失败，未找到当前索引')
+        return false
+      }else{
+        this.message_list[index].msg_list = []
+        return true
+      }
+    },
 
   },
 })

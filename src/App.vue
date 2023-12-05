@@ -15,7 +15,6 @@ const showSidebar = ref(true)
 const chatlist = useChatlistStore()
 // 监听变更
 chatlist.$subscribe((mutation, state) => {
-    console.log(chatlist.toJson());
     localStorage.setItem('chatweb', chatlist.toJson())
 })
 
