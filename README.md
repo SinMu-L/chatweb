@@ -1,29 +1,38 @@
-# vueTestResponse
+## 说明
+模仿 https://github.com/Chanzhaoyu/chatgpt-web 的前端页面
 
-This template should help get you started developing with Vue 3 in Vite.
+## 环境
+node 18.6.0
+npm 9.6.2
+vue3
 
-## Recommended IDE Setup
+## 二开步骤
+1. 下载代码 
+    ```shell
+    git clone git@github.com:SinMu-L/chatweb.git
+    ```
+2. 进入项目目录按照依赖
+    ```shell
+    cd chatweb
+    npm install
+    ```
+3. 运行页面
+    ```shell
+    npm run dev
+    ```
+4. 复制`.env`文件，粘贴重命名为`.env.development`作为开发环境使用即可。
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Customize configuration
+## 目的
+还是希望做一个响应式布局
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+响应式布局的根本是不同的媒体查询
 
-## Project Setup
 
-```sh
-npm install
-```
+## 小技巧
 
-### Compile and Hot-Reload for Development
+[事件监听](https://cn.vuejs.org/guide/essentials/event-handling.html#system-modifier-keys)
+1. 监听回车事件：`@keyup.enter="event()"`
+2. 监听ctrl+enter：`@keyup.ctrl.enter="event()"`
 
-```sh
-npm run dev
-```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
