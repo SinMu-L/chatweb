@@ -4,3 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+
+html,body{
+    padding: unset;
+    margin: unset;
+}
+#app{
+    height: 100vh;
+    
+}
