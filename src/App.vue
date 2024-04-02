@@ -120,7 +120,7 @@ const activate = (place: DrawerPlacement) => {
                 </svg></span></button>
           </div>
           <div class=" h-8 w-full">
-              这里咋整都没有自适应宽度
+              这里咋整移动端都没有自适应宽度
           </div>
 
           <div>
