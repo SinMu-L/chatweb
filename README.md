@@ -52,3 +52,5 @@ vue3
 - [x] AI API 请求错误结果渲染
 
 
+效果图
+![alt text](image.png)

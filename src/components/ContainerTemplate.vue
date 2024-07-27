@@ -188,22 +188,30 @@ function buildMessagePromt(index) {
 async function startStream(index) {
     const url = import.meta.env.VITE_AI_BASE_URL;
     const key = import.meta.env.VITE_AI_KEY
-    const response = await fetch(url, {
-        "method": "POST",
-        "headers": {
-            Authorization: `Bearer ${key}`
-        },
-        "mode": "cors",
-        "body": JSON.stringify({
-            model: setting.model,
-            messages: buildMessagePromt(index),
-            temperature: setting.Temperatures,
-            top_p: setting.Top_p,
-            stream: true,
-        }),
-        "timeout": 1000,
-    });
-    left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+    try {
+        const response = await fetch(url, {
+            "method": "POST",
+            "headers": {
+                Authorization: `Bearer ${key}`
+            },
+            "mode": "cors",
+            "body": JSON.stringify({
+                model: setting.model,
+                messages: buildMessagePromt(index),
+                temperature: setting.Temperatures,
+                top_p: setting.Top_p,
+                stream: true,
+            }),
+            "timeout": 1000,
+        });
+        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+    } catch (error) {
+        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
+        return false
+    }
+   
+    
+    
     if (response.status !== 200) {
         left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
         return false
