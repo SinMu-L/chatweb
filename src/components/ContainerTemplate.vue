@@ -1,328 +1,328 @@
 <script setup>
-import {
-    NButton, NInput, NIcon, NButtonGroup, NSpin,
-    NInputGroup, NCard, NModal, NTabs, NTabPane, NInputNumber, NSelect,
-    NTooltip,
-    useMessage
-} from 'naive-ui'
-import { GameControllerOutline, GameController } from '@vicons/ionicons5'
-import { LogInOutline as LogInIcon, SettingsOutline, Menu } from '@vicons/ionicons5'
-import { Edit, Delete, Download } from '@vicons/carbon'
-import Markdown from 'vue3-markdown-it';
+    import {
+        NButton, NInput, NIcon, NButtonGroup, NSpin,
+        NInputGroup, NCard, NModal, NTabs, NTabPane, NInputNumber, NSelect,
+        NTooltip,
+        useMessage
+    } from 'naive-ui'
+    import { GameControllerOutline, GameController } from '@vicons/ionicons5'
+    import { LogInOutline as LogInIcon, SettingsOutline, Menu } from '@vicons/ionicons5'
+    import { Edit, Delete, Download } from '@vicons/carbon'
+    import Markdown from 'vue3-markdown-it';
 
-import Login from './Login.vue'
+    import Login from './Login.vue'
 
-import { reactive, ref, getCurrentInstance, watch, watchEffect } from 'vue';
-import { useRouter, useRoute } from 'vue-router'
-import html2canvas from "html2canvas";
+    import { reactive, ref, getCurrentInstance, watch, watchEffect } from 'vue';
+    import { useRouter, useRoute } from 'vue-router'
+    import html2canvas from "html2canvas";
 
 
-const router = useRouter()
-const route = useRoute()
-const instaceV = getCurrentInstance()
-const message = useMessage()
+    const router = useRouter()
+    const route = useRoute()
+    const instaceV = getCurrentInstance()
+    const message = useMessage()
 
-// 控制侧边栏显示隐藏
-var controlSidebarHidden = ref(true)
-// 移动端下侧边栏显影
+    // 控制侧边栏显示隐藏
+    var controlSidebarHidden = ref(true)
+    // 移动端下侧边栏显影
 
-const showSetting = ref(false)
-var setting = reactive({
-    model: 'gpt-3.5-turbo',
-    Temperatures: 0.8,
-    Top_p: 1,
-})
+    const showSetting = ref(false)
+    var setting = reactive({
+        model: 'gpt-3.5-turbo',
+        Temperatures: 0.8,
+        Top_p: 1,
+    })
 
-var segmented = {
-    content: 'soft',
-    footer: 'soft'
-}
-
-var selectOptions = ref([
-    {
-        label: 'gpt-3.5-turbo',
-        value: 'gpt-3.5-turbo'
-    },
-    {
-        label: 'gpt-4',
-        value: 'gpt-4'
+    var segmented = {
+        content: 'soft',
+        footer: 'soft'
     }
-])
 
-var centerLodding = ref(false)
-
-var input_area_value = ref('')
-var left_data = reactive({
-    left_list: [
-        { uuid: 1, title: 'New Chat1', enable_edit: false },
-        { uuid: 2, title: 'New Chat2', enable_edit: false },
-    ],
-    chat: [
+    var selectOptions = ref([
         {
-            uuid: 1, msg_list: [
-                { content: 'hello1', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-            ]
+            label: 'gpt-3.5-turbo',
+            value: 'gpt-3.5-turbo'
         },
         {
-            uuid: 2, msg_list: [
-                { content: 'xxx', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
-            ]
-        },
-    ],
+            label: 'gpt-4',
+            value: 'gpt-4'
+        }
+    ])
 
-})
+    var centerLodding = ref(false)
 
-// 监听响应式数据
-watch(left_data, (newValue, oldValue) => {
-    localStorage.setItem('chatweb', JSON.stringify(newValue))
-})
-
-// 创建响应式变量后只执行一次输出的需求
-watchEffect(() => {
-    // 读取 localstorage
-    const data = localStorage.getItem('chatweb')
-    if (data) {
-
-        const history = JSON.parse(data)
-        left_data.left_list = history.left_list
-        left_data.chat = history.chat
-    }
-})
-
-
-// 添加侧壁栏item
-function addLeftListEle() {
-    const uuid = randomUuid()
-    left_data.left_list.push({
-        uuid: uuid,
-        title: `New Chat${uuid}`,
-        enable_edit: false
-    })
-    left_data.chat.push({
-        uuid: uuid,
-        msg_list: []
-    })
-
-    // 路由跳转到最新的item
-    router.push({ name: 'chat', params: { uuid: uuid } })
-
-}
-// 点击侧边栏某个item的编辑按钮
-function editLeftListEle(uuid) {
-    const index = left_data.left_list.findIndex(v => v.uuid == uuid)
-    left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit
-
-    // all_data.left_list[index].enable_edit = !all_data.left_list[index].enable_edit
-    // ls.updateLeftListItemEnableEditButton(uuid)
-
-}
-
-// 点击侧边栏某个item的删除按钮
-function delLeftListEle(uuid) {
-    var index = left_data.left_list.findIndex(v => v.uuid == uuid)
-    left_data.left_list.splice(index, 1)
-}
-
-// 获取每个 chat 的msg list
-function getMsgList(uuid) {
-    if (uuid && uuid != undefined) {
-        var index = left_data.chat.findIndex(v => v.uuid == uuid)
-        return left_data.chat[index].msg_list
-    }
-    return []
-
-}
-
-function randomUuid() {
-    var len = 9
-    var uuid = '';
-    for (let i = 0; i < len; i++) {
-        uuid += Math.floor(Math.random() * 10)
-    }
-    return Number(uuid, 10)
-}
-
-// 监听侧边栏item的回车事件
-function submit(index) {
-    editLeftListEle(index)
-}
-
-// 发送消息
-function addMessageListItem(uuid) {
-    if (input_area_value.value.length <= 6) {
-        message.info('内容长度不得小于6')
-        return false
-    }
-    var index = left_data.chat.findIndex(v => v.uuid == uuid)
-    const now_t = (new Date()).toLocaleString('sv-SE', { "timeZone": "PRC" })
-    left_data.chat[index].msg_list.push({
-        content: input_area_value.value,
-        create_time: now_t,
-        reversion: true,
-        msgload: false
-    })
-    input_area_value.value = ''
-    var ele = document.getElementById("msgArea")
-    ele.scrollTop = ele.scrollHeight + ele.offsetHeight
-    left_data.chat[index].msg_list.push({
-        content: '',
-        create_time: now_t,
-        reversion: false,
-        msgload: true
-    })
-    startStream(index)
-}
-
-function buildMessagePromt(index) {
-    const res = []
-    left_data.chat[index].msg_list.forEach(v => {
-        let role = v.reversion ? 'user' : 'assistant'
-        res.push({
-            role: role,
-            content: v.content
-        })
-    })
-    return res
-}
-
-async function startStream(index) {
-    const url = import.meta.env.VITE_AI_BASE_URL;
-    const key = import.meta.env.VITE_AI_KEY
-    try {
-        const response = await fetch(url, {
-            "method": "POST",
-            "headers": {
-                Authorization: `Bearer ${key}`
+    var input_area_value = ref('')
+    var left_data = reactive({
+        left_list: [
+            { uuid: 1, title: 'New Chat1', enable_edit: false },
+            { uuid: 2, title: 'New Chat2', enable_edit: false },
+        ],
+        chat: [
+            {
+                uuid: 1, msg_list: [
+                    { content: 'hello1', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                ]
             },
-            "mode": "cors",
-            "body": JSON.stringify({
-                model: setting.model,
-                messages: buildMessagePromt(index),
-                temperature: setting.Temperatures,
-                top_p: setting.Top_p,
-                stream: true,
-            }),
-            "timeout": 1000,
-        });
-        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
-    } catch (error) {
-        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
-        return false
+            {
+                uuid: 2, msg_list: [
+                    { content: 'xxx', create_time: '2023-11-09 11:50:23', reversion: false, msgload: false },
+                ]
+            },
+        ],
+
+    })
+
+    // 监听响应式数据
+    watch(left_data, (newValue, oldValue) => {
+        localStorage.setItem('chatweb', JSON.stringify(newValue))
+    })
+
+    // 创建响应式变量后只执行一次输出的需求
+    watchEffect(() => {
+        // 读取 localstorage
+        const data = localStorage.getItem('chatweb')
+        if (data) {
+
+            const history = JSON.parse(data)
+            left_data.left_list = history.left_list
+            left_data.chat = history.chat
+        }
+    })
+
+
+    // 添加侧壁栏item
+    function addLeftListEle() {
+        const uuid = randomUuid()
+        left_data.left_list.push({
+            uuid: uuid,
+            title: `New Chat${uuid}`,
+            enable_edit: false
+        })
+        left_data.chat.push({
+            uuid: uuid,
+            msg_list: []
+        })
+
+        // 路由跳转到最新的item
+        router.push({ name: 'chat', params: { uuid: uuid } })
+
     }
-   
-    
-    
-    if (response.status !== 200) {
-        left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
-        return false
+    // 点击侧边栏某个item的编辑按钮
+    function editLeftListEle(uuid) {
+        const index = left_data.left_list.findIndex(v => v.uuid == uuid)
+        left_data.left_list[index].enable_edit = !left_data.left_list[index].enable_edit
+
+        // all_data.left_list[index].enable_edit = !all_data.left_list[index].enable_edit
+        // ls.updateLeftListItemEnableEditButton(uuid)
+
     }
 
-    const reader = response.body.getReader();
-    let buffer = ''; // 用于缓存数据块
+    // 点击侧边栏某个item的删除按钮
+    function delLeftListEle(uuid) {
+        var index = left_data.left_list.findIndex(v => v.uuid == uuid)
+        left_data.left_list.splice(index, 1)
+    }
 
-    const readStream = async () => {
+    // 获取每个 chat 的msg list
+    function getMsgList(uuid) {
+        if (uuid && uuid != undefined) {
+            var index = left_data.chat.findIndex(v => v.uuid == uuid)
+            return left_data.chat[index].msg_list
+        }
+        return []
 
-        const { done, value } = await reader.read();
+    }
 
-        if (done) {
-            console.log('Stream reading complete');
-            return;
+    function randomUuid() {
+        var len = 9
+        var uuid = '';
+        for (let i = 0; i < len; i++) {
+            uuid += Math.floor(Math.random() * 10)
+        }
+        return Number(uuid, 10)
+    }
+
+    // 监听侧边栏item的回车事件
+    function submit(index) {
+        editLeftListEle(index)
+    }
+
+    // 发送消息
+    function addMessageListItem(uuid) {
+        if (input_area_value.value.length <= 6) {
+            message.info('内容长度不得小于6')
+            return false
+        }
+        var index = left_data.chat.findIndex(v => v.uuid == uuid)
+        const now_t = (new Date()).toLocaleString('sv-SE', { "timeZone": "PRC" })
+        left_data.chat[index].msg_list.push({
+            content: input_area_value.value,
+            create_time: now_t,
+            reversion: true,
+            msgload: false
+        })
+        input_area_value.value = ''
+        var ele = document.getElementById("msgArea")
+        ele.scrollTop = ele.scrollHeight + ele.offsetHeight
+        left_data.chat[index].msg_list.push({
+            content: '',
+            create_time: now_t,
+            reversion: false,
+            msgload: true
+        })
+        startStream(index)
+    }
+
+    function buildMessagePromt(index) {
+        const res = []
+        left_data.chat[index].msg_list.forEach(v => {
+            let role = v.reversion ? 'user' : 'assistant'
+            res.push({
+                role: role,
+                content: v.content
+            })
+        })
+        return res
+    }
+
+    async function startStream(index) {
+        const url = import.meta.env.VITE_AI_BASE_URL;
+        const key = import.meta.env.VITE_AI_KEY
+        try {
+            const response = await fetch(url, {
+                "method": "POST",
+                "headers": {
+                    Authorization: `Bearer ${key}`
+                },
+                "mode": "cors",
+                "body": JSON.stringify({
+                    model: setting.model,
+                    messages: buildMessagePromt(index),
+                    temperature: setting.Temperatures,
+                    top_p: setting.Top_p,
+                    stream: true,
+                }),
+                "timeout": 1000,
+            });
+            left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
+        } catch (error) {
+            left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
+            return false
+        }
+    
+        
+        
+        if (response.status !== 200) {
+            left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
+            return false
         }
 
-        const chunk = new TextDecoder('utf-8').decode(value);
-        buffer += chunk; // 将数据块追加到缓冲区中
+        const reader = response.body.getReader();
+        let buffer = ''; // 用于缓存数据块
 
-        // 检查缓冲区中是否有完整的数据
-        let completeData = '';
-        let separatorIndex;
-        while ((separatorIndex = buffer.indexOf('\n')) !== -1) {
-            completeData = buffer.slice(0, separatorIndex); // 提取完整的数据
-            buffer = buffer.slice(separatorIndex + 1); // 更新缓冲区，去掉已处理的数据
+        const readStream = async () => {
 
-            // 解析JSON数据
-            const res = completeData.split(": ")[1]
-            let data;
-            try {
-                data = JSON.parse(res);
-                // 这里处理业务逻辑
-                const delta_content = data.choices[0].delta.content
-                console.log(delta_content)
+            const { done, value } = await reader.read();
 
-                left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += delta_content
-            } catch (e) {
-                // console.error('Error parsing JSON:', e);
-                continue
+            if (done) {
+                console.log('Stream reading complete');
+                return;
             }
+
+            const chunk = new TextDecoder('utf-8').decode(value);
+            buffer += chunk; // 将数据块追加到缓冲区中
+
+            // 检查缓冲区中是否有完整的数据
+            let completeData = '';
+            let separatorIndex;
+            while ((separatorIndex = buffer.indexOf('\n')) !== -1) {
+                completeData = buffer.slice(0, separatorIndex); // 提取完整的数据
+                buffer = buffer.slice(separatorIndex + 1); // 更新缓冲区，去掉已处理的数据
+
+                // 解析JSON数据
+                const res = completeData.split(": ")[1]
+                let data;
+                try {
+                    data = JSON.parse(res);
+                    // 这里处理业务逻辑
+                    const delta_content = data.choices[0].delta.content
+                    console.log(delta_content)
+
+                    left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += delta_content
+                } catch (e) {
+                    // console.error('Error parsing JSON:', e);
+                    continue
+                }
+            }
+
+            return readStream();
         }
 
+        // 开始处理流数据
         return readStream();
     }
 
-    // 开始处理流数据
-    return readStream();
-}
+    function hasLogin(compomentName = 'Login') {
+        if (compomentName == 'login') return instaceV.proxy.hasLogin ? 'hidden' : '';
+        if (compomentName == 'main') return instaceV.proxy.hasLogin ? '' : 'hidden';
+    }
 
-function hasLogin(compomentName = 'Login') {
-    if (compomentName == 'login') return instaceV.proxy.hasLogin ? 'hidden' : '';
-    if (compomentName == 'main') return instaceV.proxy.hasLogin ? '' : 'hidden';
-}
+    function showSettingFunc() {
+        console.log(123)
+        showSetting.value = !showSetting.value
+    }
 
-function showSettingFunc() {
-    console.log(123)
-    showSetting.value = !showSetting.value
-}
+    // 删除当前会话记录
+    function deleteChatItemHistory(uuid) {
+        const index = left_data.chat.findIndex(v => v.uuid == uuid);
+        left_data.chat[index].msg_list = []
+        message.success('当前会话记录已清理')
+    }
 
-// 删除当前会话记录
-function deleteChatItemHistory(uuid) {
-    const index = left_data.chat.findIndex(v => v.uuid == uuid);
-    left_data.chat[index].msg_list = []
-    message.success('当前会话记录已清理')
-}
+    // 当前会话下载为图片
+    async function dom2img() {
+        centerLodding.value = true
 
-// 当前会话下载为图片
-async function dom2img() {
-    centerLodding.value = true
+        var ele = document.querySelectorAll(".msgItem")
+        var msgAreaDom = document.getElementById("msgArea")
 
-    var ele = document.querySelectorAll(".msgItem")
-    var msgAreaDom = document.getElementById("msgArea")
-
-    const width = msgAreaDom.offsetWidth * 2
-    const height = msgAreaDom.scrollHeight * 1.5
+        const width = msgAreaDom.offsetWidth * 2
+        const height = msgAreaDom.scrollHeight * 1.5
 
 
-    let canvas1 = document.createElement('canvas');
-    let context = canvas1.getContext('2d');
-    canvas1.width = width;
-    canvas1.height = height;
-    // 绘制矩形添加白色背景色
-    context.rect(0, 0, width, height);
-    context.fillStyle = "#fff";
-    context.fill();
+        let canvas1 = document.createElement('canvas');
+        let context = canvas1.getContext('2d');
+        canvas1.width = width;
+        canvas1.height = height;
+        // 绘制矩形添加白色背景色
+        context.rect(0, 0, width, height);
+        context.fillStyle = "#fff";
+        context.fill();
 
-    let beforeHeight = 0
-    for (let i = 0; i < ele.length; i++) {
-        const dom_canvas = await html2canvas(ele[i], {
-            scrollX: 0,
-            scrollY: 0,
-            height: ele[i].scrollHeight,
-            width: ele[i].scrollWidth,
-        })
+        let beforeHeight = 0
+        for (let i = 0; i < ele.length; i++) {
+            const dom_canvas = await html2canvas(ele[i], {
+                scrollX: 0,
+                scrollY: 0,
+                height: ele[i].scrollHeight,
+                width: ele[i].scrollWidth,
+            })
 
-        // var image = dom_canvas.toDataURL("image/png");
-        context.drawImage(dom_canvas, 0, beforeHeight, dom_canvas.width, dom_canvas.height)
-        beforeHeight = beforeHeight + dom_canvas.height;
+            // var image = dom_canvas.toDataURL("image/png");
+            context.drawImage(dom_canvas, 0, beforeHeight, dom_canvas.width, dom_canvas.height)
+            beforeHeight = beforeHeight + dom_canvas.height;
+
+        }
+        var image = canvas1.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        var link = document.getElementById("link");
+        link.setAttribute("download", `chatweb-${(new Date()).getTime()}.png`);
+        link.setAttribute("href", image);
+        link.click();
+
+        centerLodding.value = false
+        message.success('图片下载完成')
 
     }
-    var image = canvas1.toDataURL("image/png").replace("image/png", "image/octet-stream");
-    var link = document.getElementById("link");
-    link.setAttribute("download", `chatweb-${(new Date()).getTime()}.png`);
-    link.setAttribute("href", image);
-    link.click();
-
-    centerLodding.value = false
-    message.success('图片下载完成')
-
-}
 
 
 
@@ -449,7 +449,7 @@ async function dom2img() {
             </div>
         </div>
         <!-- 移动端模式下侧边栏的样式 -->
-        <div class=" sm:hidden absolute top-1 left-1 z-50 h-full w-full flex flex-col">
+        <div class=" sm:hidden absolute top-1 left-1  h-full w-full flex flex-col ">
             <div  >
                 <n-button text style="font-size:32px"  key=""  @click="controlSidebarHidden=!controlSidebarHidden" >
                     <n-icon class=" text-black dark:text-white">
