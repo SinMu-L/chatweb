@@ -46,6 +46,7 @@ router.beforeEach((to, from, next) => {
     // 路由不存在，则跳转到第一个路由
     console.log(to)
     if(to.matched.length > 0){
+        console.log("守卫：",to)
         // 路由存在
         if(to.name == 'chat'){
             var uuid = to.params.uuid

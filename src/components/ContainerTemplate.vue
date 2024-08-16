@@ -119,6 +119,10 @@
 
     // 点击侧边栏某个item的删除按钮
     function delLeftListEle(uuid) {
+        if(left_data.left_list.length == 1){
+            message.info('列表最低保留一个')
+            return false
+        }
         var index = left_data.left_list.findIndex(v => v.uuid == uuid)
         left_data.left_list.splice(index, 1)
     }
