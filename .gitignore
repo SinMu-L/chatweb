@@ -29,3 +29,5 @@ coverage
 
 .env.development
 .vscode
+
+.env

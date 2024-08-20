@@ -22,15 +22,18 @@ const route = useRoute()
 const instaceV = getCurrentInstance()
 const message = useMessage()
 
-console.log(route)
+
 
 // 控制侧边栏显示隐藏
 var controlSidebarHidden = ref(true)
 // 移动端下侧边栏显影
 
 const showSetting = ref(false)
+var LLM_URL = ref("https://uu.ci/v1/chat/completions")
+var LLM_APIKEY = ref("sk-cwtdeSy4Ownmy6Uh5e9b6a67Fe4c4454A3Dc524876348eB1")
+
 var setting = reactive({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
     Temperatures: 0.8,
     Top_p: 1,
 })
@@ -46,12 +49,16 @@ var segmented = {
 
 var selectOptions = ref([
     {
-        label: 'gpt-3.5-turbo',
-        value: 'gpt-3.5-turbo'
+        label: 'claude-3.5-sonnet',
+        value: 'claude-3.5-sonnet'
     },
     {
         label: 'gpt-4',
         value: 'gpt-4'
+    },
+    {
+        label: 'gpt-4-turbo',
+        value: 'gpt-4-turbo'
     }
 ])
 
@@ -85,7 +92,6 @@ watch(left_data, (newValue, oldValue) => {
     } else {
         left_list_is_empty.value = true
     }
-    console.log(left_data)
     localStorage.setItem('chatweb', JSON.stringify(newValue))
 })
 
@@ -183,8 +189,8 @@ function submit(index) {
 
 // 发送消息
 function addMessageListItem(uuid) {
-    if (input_area_value.value.length <= 6) {
-        message.info('内容长度不得小于6')
+    if (input_area_value.value.length <= 2) {
+        message.info('内容长度不得小于2')
         return false
     }
     var index = left_data.chat.findIndex(v => v.uuid == uuid)
@@ -204,6 +210,7 @@ function addMessageListItem(uuid) {
         reversion: false,
         msgload: true
     })
+    console.info("开始发送消息...")
     startStream(index)
 }
 
@@ -216,27 +223,32 @@ function buildMessagePromt(index) {
             content: v.content
         })
     })
+    res.pop()
     return res
 }
 
 async function startStream(index) {
-    const url = import.meta.env.VITE_AI_BASE_URL;
-    const key = import.meta.env.VITE_AI_KEY
+    const url = LLM_URL.value;
+    const key = LLM_APIKEY.value
+    debugger
+    const body = {
+        model: setting.model,
+        messages: buildMessagePromt(index),
+        temperature: setting.Temperatures,
+        top_p: setting.Top_p,
+        stream: true,
+    }
+    var response = null
     try {
-        const response = await fetch(url, {
+        response = await fetch(url, {
             "method": "POST",
             "headers": {
-                Authorization: `Bearer ${key}`
+                Authorization: `Bearer ${key}`,
+                "Content-Type": "application/json"
             },
             "mode": "cors",
-            "body": JSON.stringify({
-                model: setting.model,
-                messages: buildMessagePromt(index),
-                temperature: setting.Temperatures,
-                top_p: setting.Top_p,
-                stream: true,
-            }),
-            "timeout": 1000,
+            "body": JSON.stringify(body),
+            "timeout": 60000,
         });
         left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].msgload = false
     } catch (error) {
@@ -454,6 +466,19 @@ async function dom2img() {
                                             </n-tab-pane>
                                             <n-tab-pane name="settings" tab="设置">
                                                 <div class=" grid grid-rows-3 gap-4">
+
+                                                    <div>
+                                                        <span class=" mr-4">LLM_URL: </span>
+                                                        <br>
+                                                        <n-input :style="{ width: '80%' }" v-model:value="LLM_URL"
+                                                            type="text" placeholder="LLM_URL" />
+                                                    </div>
+                                                    <div>
+                                                        <span class=" mr-4">LLM_APIKEY: </span>
+                                                        <br>
+                                                        <n-input :style="{ width: '80%' }" v-model:value="LLM_APIKEY"
+                                                            type="text" placeholder="LLM_APIKEY" />
+                                                    </div>
                                                     <div>
                                                         <span class=" mr-4">Model: </span>
                                                         <n-select :style="{ width: '80%' }" :options="selectOptions"
@@ -642,7 +667,7 @@ async function dom2img() {
 
                     </div>
 
-                    <div  class=" basis-1/12   w-full">
+                    <div v-if="!left_list_is_empty" class=" basis-1/12   w-full">
                         <!-- 这里是输入框 -->
                         <div class="  p-2">
                             <n-input-group>
@@ -671,7 +696,7 @@ async function dom2img() {
 
 
                                 <n-input show-count @keyup.ctrl.enter="addMessageListItem(route.params.uuid)"
-                                    placeholder="自动调整尺寸" v-model:value="input_area_value" type="textarea" size="tiny"
+                                    placeholder="Ctrl+Enter 发送消息" v-model:value="input_area_value" type="textarea" size="tiny"
                                     :autosize="{
             minRows: 2,
             maxRows: 5
