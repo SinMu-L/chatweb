@@ -333,7 +333,7 @@
 
                                 <n-input show-count @keyup.ctrl.enter="addMessageListItem(route.params.uuid)"
                                     placeholder="Ctrl+Enter 发送消息" v-model:value="input_area_value" type="textarea"
-                                     :autosize="{
+                                    :autosize="{
                                         minRows: 2,
                                         maxRows: 5
                                     }" />
@@ -582,9 +582,9 @@ function addMessageListItem(uuid) {
     })
     console.info("开始发送消息...")
     startStream(index)
-    nextTick(()=>{
+    nextTick(() => {
 
-        summaryTitle(uuid)
+        // summaryTitle(uuid)
     })
     console.log("也许先执行了这句话...")
 
@@ -607,7 +607,7 @@ async function summaryTitle(uuid) {
 
     const url = LLM_URL.value;
     const key = LLM_APIKEY.value
-    try{
+    try {
         fetch(url, {
             "method": "POST",
             "headers": {
@@ -619,22 +619,22 @@ async function summaryTitle(uuid) {
             "timeout": 60000,
         }).then(response => {
             return response.json();
-        }).then(data=>{
+        }).then(data => {
             try {
-                
+
                 left_data.left_list[index].title = data.choices[0].message.content;
             } catch (error) {
-                
-            }
-            console.log( data);
-        });
-        
-        
 
-    }catch(e){
-        console.info("Error: ",e)
+            }
+            console.log(data);
+        });
+
+
+
+    } catch (e) {
+        console.info("Error: ", e)
     }
-    
+
 }
 
 function buildMessagePromt(index) {
@@ -722,10 +722,10 @@ async function startStream(index) {
 
 
 
-    // if (response.status !== 200) {
-    //     left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
-    //     return false
-    // }
+// if (response.status !== 200) {
+//     left_data.chat[index].msg_list[left_data.chat[index].msg_list.length - 1].content += `发生了一些错误：${response.status}-${response.statusText}`
+//     return false
+// }
 
     // const reader = response.body.getReader();
     // let buffer = ''; // 用于缓存数据块
