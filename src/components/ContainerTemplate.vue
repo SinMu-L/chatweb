@@ -65,7 +65,7 @@
                                 DaShuaiqi Li
                             </div>
                             <div class=" text-xs">
-                                Start On <a class=" text-blue-400" href="https://github.com">Github</a>
+                                Start On <a class=" text-blue-400" href="https://github.com/SinMu-L/chatweb">Github</a>
                             </div>
                         </div>
                         <!-- 设置 -->
@@ -206,7 +206,7 @@
                                     DaShuaiqi Li
                                 </div>
                                 <div class=" text-xs">
-                                    Start On <a class=" text-blue-400" href="https://github.com">Github</a>
+                                    Start On <a class=" text-blue-400" href="https://github.com/SinMu-L/chatweb">Github</a>
                                 </div>
                             </div>
                             <!-- 设置 -->
