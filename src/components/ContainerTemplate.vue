@@ -516,7 +516,7 @@ async function delLeftListEle(uuid) {
     left_data.chat.splice(chat_index, 1)
 
     if (left_data.chat.length == 0) {
-        left_list_is_empty = true
+        left_list_is_empty.value = true
     } else {
         await nextTick()
         // 默认跳转到最新的 chat
