@@ -407,10 +407,7 @@ var segmented = {
 }
 
 var selectOptions = ref([
-    {
-        label: 'claude-3.5-sonnet',
-        value: 'claude-3.5-sonnet'
-    },
+
     {
         label: 'gpt-4',
         value: 'gpt-4'
