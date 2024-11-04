@@ -6,10 +6,11 @@ import { SpeedInsights } from '@vercel/speed-insights/vue';
 <template>
   
   <n-message-provider>
-    <SpeedInsights />
+    
     <router-view></router-view>
     <!-- <ContainerTemplate></ContainerTemplate> -->
   </n-message-provider>
+  <SpeedInsights />
 </template>
 
 <style scoped></style>
